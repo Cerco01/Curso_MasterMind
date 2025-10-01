@@ -1,0 +1,22 @@
+# Directorios de Python y compilación
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Directorios de IDEs y editores (VS Code, JetBrains/IntelliJ/PyCharm etc.)
+.vscode/
+*.iml
+.idea/
+
+
+# Archivos de Sistema/Historial que NO deben subirse
+.bash_history
+.gitconfig
+.idlerc-recent-files.lst
+Thumbs.db
