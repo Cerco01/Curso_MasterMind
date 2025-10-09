@@ -1,4 +1,4 @@
-from setuptools.command.build_ext import if_dl
+
 
 f = float(input("Cuantos ºF quieres convertir a ºC?"))
 c = round((f - 32)*5/9, 2)
@@ -13,3 +13,5 @@ elif c >= 0:
     print("Hace fresquete.")
 else:
     print("Ten cuidado, hace un frío del carajo.")
+
+input("Enter para salir...")

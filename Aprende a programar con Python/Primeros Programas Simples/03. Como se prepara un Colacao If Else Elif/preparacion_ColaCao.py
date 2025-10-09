@@ -1,4 +1,4 @@
-from tkinter.tix import InputOnly
+
 
 print("Me voy a la cocina. ")
 print("Abro la nevera. ")
