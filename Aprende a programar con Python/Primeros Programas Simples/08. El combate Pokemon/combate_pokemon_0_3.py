@@ -4,29 +4,29 @@ import os
 
 #Variables
 
-titulo = "⚔️¡Un combate Pokémon comienza!⚔️"
-turno_cpu = "🧢'¡Turno de Pikachu!'⚡ + \n"
-emotes_turno_cpu = "🔹" * 12 + "\n"
-turno_ataque = "⚔️'¡Turno de Squirtle!'💦 + \n"
-emotes_turno_ataque = "🔻" * 13 + "\n"
-LONGITUD_BARRA = 20
+title = "⚔️¡Un combate Pokémon comienza!⚔️"
+cpu_turn_text = "🧢'¡Turno de Pikachu!'⚡ + \n"
+cpu_turn_emotes = "🔹" * 12 + "\n"
+player_turn_text = "⚔️'¡Turno de Squirtle!'💦 + \n"
+player_turn_emotes = "🔻" * 13 + "\n"
+BAR_LENGTH = 20
 
 
 #Variables Pikachu
 
-HP_INICIAL_PIKACHU = 70
-hp_pikachu = 70
-impactrueno = 11
-ataque_rapido = 10
+PIKACHU_INITIAL_HP = 70
+pikachu_hp = 70
+thunder_shock_damage = 11
+quick_attack_damage = 10
 
 
 #Variables Squirtle
 
-HP_INICIAL_SQUIRTLE = 70
-hp_squirtle = 70
-placaje = 10
-pistola_agua = 12
-burbuja = 9
+SQUIRTLE_INITIAL_HP = 70
+squirtle_hp = 70
+tackle_damage = 10
+water_gun_damage = 12
+bubble_damage = 9
 
 
 
@@ -51,7 +51,7 @@ _,-'       `.     |    |  /`.   \,-'    |   \  /   |   |    \  |`.
 input("✅ Okay... ¡Let's Go!")
 os.system("cls")
 
-print("\n\n" + titulo + "\n" + "-" * len(titulo) + "\n")
+print("\n\n" + title + "\n" + "-" * len(title) + "\n")
 input("✅ Enter...")
 os.system("cls")
 
@@ -60,9 +60,9 @@ os.system("cls")
 
 #Asignación del nombre del "entrenador pokemon".
 
-entrenador_pokemon = input("🧑 ¿Cual es el nombre del entrenador Pokemon de hoy?\n\n")
+pokemon_trainer_name = input("🧑 ¿Cual es el nombre del entrenador Pokemon de hoy?\n\n")
 os.system("cls")
-print(f"\n🧑 ¡{entrenador_pokemon} envía a Squirtle!💦\n")
+print(f"\n🧑 ¡{pokemon_trainer_name} envía a Squirtle!💦\n")
 print("¡En la otra esquina, el Pikachu⚡ de Ash🧢 entra en combate!\n")
 input("✅ Enter...")
 os.system("cls")
@@ -75,7 +75,7 @@ os.system("cls")
 
 
 
-while hp_pikachu > 0 and hp_squirtle > 0:
+while pikachu_hp > 0 and squirtle_hp > 0:
     #Se desenvuelven los turnos de combate.
 
 
@@ -89,21 +89,21 @@ while hp_pikachu > 0 and hp_squirtle > 0:
 
     #Título turno Pikachu.
 
-    print(emotes_turno_cpu + turno_cpu + emotes_turno_cpu)
+    print(cpu_turn_emotes + cpu_turn_text + cpu_turn_emotes)
 
 
     #Selección de ataque random CPU.
 
-    ataque_pikachu = random.randint(1, 2)
+    pikachu_attack_choice = random.randint(1, 2)
 
 
     # Mecánica 10% probabilidad de esquivar el ataque de pikachu.
 
-    esquiva_squirtle = random.randint(1, 10)
+    squirtle_dodge_roll = random.randint(1, 10)
 
-    if esquiva_squirtle == 1:
+    if squirtle_dodge_roll == 1:
 
-        if ataque_pikachu == 1:
+        if pikachu_attack_choice == 1:
 
             print("¡Pikachu usa Impactrueno! ⚡⚡⚡\n")
             print(">--< Pikachu lanza un rayo eléctrico.⚡\n")
@@ -119,12 +119,12 @@ while hp_pikachu > 0 and hp_squirtle > 0:
 
         #Barra de vida por si falla Pikachu.
 
-        barras_de_vida_pikachu = int(hp_pikachu * LONGITUD_BARRA / HP_INICIAL_PIKACHU)
-        barras_de_vida_squirtle = int(hp_squirtle * LONGITUD_BARRA / HP_INICIAL_SQUIRTLE)
-        print(f"La vida de Pikachu es de [{"🔶" * barras_de_vida_pikachu}{"🔸" * 
-                                     (LONGITUD_BARRA - barras_de_vida_pikachu)}]({hp_pikachu}/{HP_INICIAL_PIKACHU})hp.")
-        print(f"La vida de Squirtle es de [{"🔷" * barras_de_vida_squirtle}{"🔹" * 
-                               (LONGITUD_BARRA - barras_de_vida_squirtle)}]({hp_squirtle}/{HP_INICIAL_SQUIRTLE})hp. \n")
+        pikachu_hp_bars = int(pikachu_hp * BAR_LENGTH / PIKACHU_INITIAL_HP)
+        squirtle_hp_bars = int(squirtle_hp * BAR_LENGTH / SQUIRTLE_INITIAL_HP)
+        print(f"La vida de Pikachu es de [{"🔶" * pikachu_hp_bars}{"🔸" *
+                                                                  (BAR_LENGTH - pikachu_hp_bars)}]({pikachu_hp}/{PIKACHU_INITIAL_HP})hp.")
+        print(f"La vida de Squirtle es de [{"🔷" * squirtle_hp_bars}{"🔹" *
+                                                                    (BAR_LENGTH - squirtle_hp_bars)}]({squirtle_hp}/{SQUIRTLE_INITIAL_HP})hp. \n")
 
         input("✅ Enter...")
         os.system("cls")
@@ -135,38 +135,38 @@ while hp_pikachu > 0 and hp_squirtle > 0:
 
     else:
 
-        if ataque_pikachu == 1:
+        if pikachu_attack_choice == 1:
             # Impactrueno.
             print("¡Pikachu usa Impactrueno! ⚡⚡⚡\n")
             print(">--< Pikachu lanza un rayo eléctrico.⚡\n")
 
-            danho = impactrueno
-            hp_squirtle -= danho
-            hp_squirtle = max(hp_squirtle, 0)
+            damage = thunder_shock_damage
+            squirtle_hp -= damage
+            squirtle_hp = max(squirtle_hp, 0)
 
-            icono = "⚡"
+            icon = "⚡"
 
-            if hp_squirtle > 50:
-                mensaje_estado_squirtle = f"¡Squirtle💦 ha recibido {danho} de daño {icono}, pero sigue con fuerzas!\n"
+            if squirtle_hp > 50:
+                squirtle_status_message = f"¡Squirtle💦 ha recibido {damage} de daño {icon}, pero sigue con fuerzas!\n"
 
-            elif hp_squirtle > 40:
-                mensaje_estado_squirtle = f"¡Squirtle💦 ha recibido {danho} de daño {icono}!\n"
+            elif squirtle_hp > 40:
+                squirtle_status_message = f"¡Squirtle💦 ha recibido {damage} de daño {icon}!\n"
 
-            elif hp_squirtle > 30:
-                mensaje_estado_squirtle = (f"¡Squirtle💦 ha recibido {danho} de daño {icono} "
+            elif squirtle_hp > 30:
+                squirtle_status_message = (f"¡Squirtle💦 ha recibido {damage} de daño {icon} "
                                            f"y ya se siente resentido!\n")
 
-            elif hp_squirtle > 20:
-                mensaje_estado_squirtle = f"¡Squirtle💦 ha recibido {danho} de daño {icono} y está debilitado!\n"
+            elif squirtle_hp > 20:
+                squirtle_status_message = f"¡Squirtle💦 ha recibido {damage} de daño {icon} y está debilitado!\n"
 
-            elif hp_pikachu >= 1:
-                mensaje_estado_squirtle = (f"¡Pikachu ha recibido {danho} de daño {icono}. "
+            elif pikachu_hp >= 1:
+                squirtle_status_message = (f"¡Pikachu ha recibido {damage} de daño {icon}. "
                                            f"Ya aguanta con muy poca energía!\n")
                 
             else:
-                mensaje_estado_squirtle = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
+                squirtle_status_message = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
 
-            print(mensaje_estado_squirtle)
+            print(squirtle_status_message)
 
 
         else:
@@ -174,44 +174,44 @@ while hp_pikachu > 0 and hp_squirtle > 0:
             print("¡Pikachu usa Ataque Rápido! 💨💨💨\n")
             print(">>>>> Pikachu se mueve a toda velocidad.\n")
 
-            danho = ataque_rapido
-            hp_squirtle -= danho
-            hp_squirtle = max(hp_squirtle, 0)
+            damage = quick_attack_damage
+            squirtle_hp -= damage
+            squirtle_hp = max(squirtle_hp, 0)
 
-            icono = "💨"
+            icon = "💨"
 
-            if hp_squirtle > 50:
-                mensaje_estado_squirtle = (f"¡Squirtle💦 ha recibido {danho} de daño {icono}, "
+            if squirtle_hp > 50:
+                squirtle_status_message = (f"¡Squirtle💦 ha recibido {damage} de daño {icon}, "
                                            f"pero sigue con fuerzas!\n")
 
-            elif hp_squirtle > 40:
-                mensaje_estado_squirtle = f"¡Squirtle💦 ha recibido {danho} de daño {icono}!\n"
+            elif squirtle_hp > 40:
+                squirtle_status_message = f"¡Squirtle💦 ha recibido {damage} de daño {icon}!\n"
 
-            elif hp_squirtle > 30:
-                mensaje_estado_squirtle = (f"¡Squirtle💦 ha recibido {danho} de daño {icono} "
+            elif squirtle_hp > 30:
+                squirtle_status_message = (f"¡Squirtle💦 ha recibido {damage} de daño {icon} "
                                            f"y ya se siente resentido!\n")
 
-            elif hp_squirtle > 20:
-                mensaje_estado_squirtle = f"¡Squirtle💦 ha recibido {danho} de daño {icono} y está debilitado!\n"
+            elif squirtle_hp > 20:
+                squirtle_status_message = f"¡Squirtle💦 ha recibido {damage} de daño {icon} y está debilitado!\n"
 
-            elif hp_pikachu >= 1:
-                mensaje_estado_squirtle = (f"¡Pikachu ha recibido {danho} de daño {icono}. "
+            elif pikachu_hp >= 1:
+                squirtle_status_message = (f"¡Pikachu ha recibido {damage} de daño {icon}. "
                                            f"Ya aguanta con muy poca energía!\n")
                 
             else:
-                mensaje_estado_squirtle = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
+                squirtle_status_message = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
 
-            print(mensaje_estado_squirtle)
+            print(squirtle_status_message)
 
 
         #Barra de vida.
 
-        barras_de_vida_pikachu = int(hp_pikachu * LONGITUD_BARRA / HP_INICIAL_PIKACHU)
-        barras_de_vida_squirtle = int(hp_squirtle * LONGITUD_BARRA / HP_INICIAL_SQUIRTLE)
-        print(f"La vida de Pikachu es de [{"🔶" * barras_de_vida_pikachu}{"🔸" * 
-                                     (LONGITUD_BARRA - barras_de_vida_pikachu)}]({hp_pikachu}/{HP_INICIAL_PIKACHU})hp.")
-        print(f"\nLa vida de Squirtle es de [{"🔷" * barras_de_vida_squirtle}{"🔹" * 
-                               (LONGITUD_BARRA - barras_de_vida_squirtle)}]({hp_squirtle}/{HP_INICIAL_SQUIRTLE})hp. \n")
+        pikachu_hp_bars = int(pikachu_hp * BAR_LENGTH / PIKACHU_INITIAL_HP)
+        squirtle_hp_bars = int(squirtle_hp * BAR_LENGTH / SQUIRTLE_INITIAL_HP)
+        print(f"La vida de Pikachu es de [{"🔶" * pikachu_hp_bars}{"🔸" *
+                                                                  (BAR_LENGTH - pikachu_hp_bars)}]({pikachu_hp}/{PIKACHU_INITIAL_HP})hp.")
+        print(f"\nLa vida de Squirtle es de [{"🔷" * squirtle_hp_bars}{"🔹" *
+                                                                      (BAR_LENGTH - squirtle_hp_bars)}]({squirtle_hp}/{SQUIRTLE_INITIAL_HP})hp. \n")
 
         input("\n✅ Enter...")
         os.system("cls")
@@ -221,7 +221,7 @@ while hp_pikachu > 0 and hp_squirtle > 0:
 
     #Mecánica para comprobar si squirtle ha muerto. :S
 
-    if hp_squirtle == 0:
+    if squirtle_hp == 0:
         print("⚡👑 ¡EL ENTRENADOR ASH HA GANADO EL COMBATE CON SU PIKACHU! ⚡🐭\n")
         input("🔁 Enter para cerrar. ¡Suerte la próxima vez!")
         exit()
@@ -238,39 +238,39 @@ while hp_pikachu > 0 and hp_squirtle > 0:
 
     #Título del turno de ataque del Usuario.
 
-    print(emotes_turno_ataque + turno_ataque + emotes_turno_ataque +
-          "🤜 [P]lacaje.\n💦 Pistola [A]gua.\n🫧 [B]urbuja.\n 🤷[N]o hacer nada.\n" + emotes_turno_ataque)
+    print(player_turn_emotes + player_turn_text + player_turn_emotes +
+          "🤜 [P]lacaje.\n💦 Pistola [A]gua.\n🫧 [B]urbuja.\n 🤷[N]o hacer nada.\n" + player_turn_emotes)
 
 
 
 
     #Input y selección del ataque del Usuario.
 
-    ataque_squirtle = input("Introduce la letra del ataque (🤜[P], 💦[A], 🫧[B] o 🤷[N]): ").strip().upper()
+    squirtle_attack_input = input("Introduce la letra del ataque (🤜[P], 💦[A], 🫧[B] o 🤷[N]): ").strip().upper()
 
-    while ataque_squirtle not in ["P", "A", "B", "N"]:
+    while squirtle_attack_input not in ["P", "A", "B", "N"]:
 
         print("\nOpción no válida. Solo se admite P, B, A o N.\n")
-        ataque_squirtle = input("Introduce la letra del ataque (🤜[P], 💦[A], 🫧[B] o 🤷[N]): ").strip().upper()
+        squirtle_attack_input = input("Introduce la letra del ataque (🤜[P], 💦[A], 🫧[B] o 🤷[N]): ").strip().upper()
 
 
     os.system("cls")
-    print(emotes_turno_ataque + turno_ataque + emotes_turno_ataque)
+    print(player_turn_emotes + player_turn_text + player_turn_emotes)
 
     # Mecánica 10% probabilidad de esquivar el ataque de pikachu.
 
-    esquiva_pikachu = random.randint(1, 10)
+    pikachu_dodge_roll = random.randint(1, 10)
 
-    if esquiva_pikachu == 1 and ataque_squirtle != "N":
+    if pikachu_dodge_roll == 1 and squirtle_attack_input != "N":
 
-        if ataque_squirtle == "P":
+        if squirtle_attack_input == "P":
             #Esquiva Placaje.
 
             print("¡Squirtle usa Placaje! 🤜💥\n")
             print("Squirtle embiste con fuerza.\n")
             print("\n🤜🌀 Pero... ¡¡¡PIKACHU ESQUIVÓ PLACAJE!!!💨\n")
 
-        elif ataque_squirtle == "A":
+        elif squirtle_attack_input == "A":
             #Esquiva Pistola Agua.
 
             print("¡Squirtle usa Pistola Agua! 💦💦💦\n")
@@ -287,125 +287,125 @@ while hp_pikachu > 0 and hp_squirtle > 0:
 
         # Barra de vida por si falla.
 
-        barras_de_vida_pikachu = int(hp_pikachu * LONGITUD_BARRA / HP_INICIAL_PIKACHU)
-        barras_de_vida_squirtle = int(hp_squirtle * LONGITUD_BARRA / HP_INICIAL_SQUIRTLE)
-        print(f"La vida de Pikachu es de [{"🔶" * barras_de_vida_pikachu}{"🔸" * 
-                                     (LONGITUD_BARRA - barras_de_vida_pikachu)}]({hp_pikachu}/{HP_INICIAL_PIKACHU})hp.")
+        pikachu_hp_bars = int(pikachu_hp * BAR_LENGTH / PIKACHU_INITIAL_HP)
+        squirtle_hp_bars = int(squirtle_hp * BAR_LENGTH / SQUIRTLE_INITIAL_HP)
+        print(f"La vida de Pikachu es de [{"🔶" * pikachu_hp_bars}{"🔸" *
+                                                                  (BAR_LENGTH - pikachu_hp_bars)}]({pikachu_hp}/{PIKACHU_INITIAL_HP})hp.")
 
-        print(f"La vida de Squirtle es de [{"🔷" * barras_de_vida_squirtle}{"🔹" * 
-                               (LONGITUD_BARRA - barras_de_vida_squirtle)}]({hp_squirtle}/{HP_INICIAL_SQUIRTLE})hp. \n")
+        print(f"La vida de Squirtle es de [{"🔷" * squirtle_hp_bars}{"🔹" *
+                                                                    (BAR_LENGTH - squirtle_hp_bars)}]({squirtle_hp}/{SQUIRTLE_INITIAL_HP})hp. \n")
 
         input("✅ Enter...")
         os.system("cls")
 
     else:
 
-        if ataque_squirtle == "P":
+        if squirtle_attack_input == "P":
             #Placaje.
             print("¡Squirtle usa Placaje! 🤜💥\n")
             print("Squirtle embiste con fuerza.\n")
 
-            danho = placaje
-            hp_pikachu -= danho
-            hp_pikachu = max(hp_pikachu, 0)
+            damage = tackle_damage
+            pikachu_hp -= damage
+            pikachu_hp = max(pikachu_hp, 0)
 
-            icono = "💥"
+            icon = "💥"
 
-            if hp_pikachu > 50:
-                mensaje_estado_pikachu = f"¡Pikachu⚡ ha recibido {danho} de daño {icono}, pero sigue con fuerzas!\n"
+            if pikachu_hp > 50:
+                pikachu_status_message = f"¡Pikachu⚡ ha recibido {damage} de daño {icon}, pero sigue con fuerzas!\n"
 
-            elif hp_pikachu > 40:
-                mensaje_estado_pikachu = f"¡Pikachu⚡ ha recibido {danho} de daño {icono}!\n"
+            elif pikachu_hp > 40:
+                pikachu_status_message = f"¡Pikachu⚡ ha recibido {damage} de daño {icon}!\n"
 
-            elif hp_pikachu > 30:
-                mensaje_estado_pikachu = f"¡Pikachu⚡ ha recibido {danho} de daño {icono} y ya se siente resentido!\n"
+            elif pikachu_hp > 30:
+                pikachu_status_message = f"¡Pikachu⚡ ha recibido {damage} de daño {icon} y ya se siente resentido!\n"
 
-            elif hp_pikachu > 20:
-                mensaje_estado_pikachu = f"¡Pikachu⚡ ha recibido {danho} de daño {icono}. Está debilitado!\n"
+            elif pikachu_hp > 20:
+                pikachu_status_message = f"¡Pikachu⚡ ha recibido {damage} de daño {icon}. Está debilitado!\n"
 
-            elif hp_pikachu >= 1:
-                mensaje_estado_pikachu = (f"¡Pikachu ha recibido {danho} de daño {icono}. "
+            elif pikachu_hp >= 1:
+                pikachu_status_message = (f"¡Pikachu ha recibido {damage} de daño {icon}. "
                                           f"Ya aguanta con muy poca energía!\n")
                 
             else:
-                mensaje_estado_pikachu = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
+                pikachu_status_message = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
 
-            print(mensaje_estado_pikachu)
+            print(pikachu_status_message)
 
 
-        elif ataque_squirtle == "A":
+        elif squirtle_attack_input == "A":
             #Pistola Agua.
             print("¡Squirtle usa Pistola Agua! 💦💦💦\n")
             print("~~~> Squirtle dispara agua a presión.\n")
 
-            danho = pistola_agua
-            hp_pikachu -= danho
-            hp_pikachu = max(hp_pikachu, 0)
+            damage = water_gun_damage
+            pikachu_hp -= damage
+            pikachu_hp = max(pikachu_hp, 0)
 
-            icono = "💦"
+            icon = "💦"
 
-            if hp_pikachu > 50:
-                mensaje_estado_pikachu = (f"¡Pikachu⚡ ha recibido {danho} de daño {icono}, "
+            if pikachu_hp > 50:
+                pikachu_status_message = (f"¡Pikachu⚡ ha recibido {damage} de daño {icon}, "
                                           f"pero sigue con fuerzas!\n")
 
-            elif hp_pikachu > 40:
-                mensaje_estado_pikachu = f"¡Pikachu⚡ ha recibido {danho} de daño {icono}!\n"
+            elif pikachu_hp > 40:
+                pikachu_status_message = f"¡Pikachu⚡ ha recibido {damage} de daño {icon}!\n"
 
-            elif hp_pikachu > 30:
-                mensaje_estado_pikachu = (f"¡Pikachu⚡ ha recibido {danho} de daño {icono} "
+            elif pikachu_hp > 30:
+                pikachu_status_message = (f"¡Pikachu⚡ ha recibido {damage} de daño {icon} "
                                           f"y ya se siente resentido!\n")
 
-            elif hp_pikachu > 20:
-                mensaje_estado_pikachu = f"¡Pikachu⚡ ha recibido {danho} de daño {icono}. Está debilitado!\n"
+            elif pikachu_hp > 20:
+                pikachu_status_message = f"¡Pikachu⚡ ha recibido {damage} de daño {icon}. Está debilitado!\n"
 
-            elif hp_pikachu >= 1:
-                mensaje_estado_pikachu = (f"¡Pikachu ha recibido {danho} de daño {icono}. "
+            elif pikachu_hp >= 1:
+                pikachu_status_message = (f"¡Pikachu ha recibido {damage} de daño {icon}. "
                                           f"Ya aguanta con muy poca energía!\n")
                 
             else:
-                mensaje_estado_pikachu = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
+                pikachu_status_message = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
 
-            print(mensaje_estado_pikachu)
+            print(pikachu_status_message)
 
 
-        elif ataque_squirtle == "B":
+        elif squirtle_attack_input == "B":
             #Burbuja.
             print("¡Squirtle usa Burbuja! 🫧🫧🫧\n")
             print("o o o Squirtle lanza burbujas.\n")
 
-            danho = burbuja
-            hp_pikachu -= danho
-            hp_pikachu = max(hp_pikachu, 0)
+            damage = bubble_damage
+            pikachu_hp -= damage
+            pikachu_hp = max(pikachu_hp, 0)
 
-            icono = "🫧"
+            icon = "🫧"
 
-            if hp_pikachu > 50:
-                mensaje_estado_pikachu = f"¡Pikachu ha recibido {danho} de daño {icono}, pero sigue con fuerzas!\n"
+            if pikachu_hp > 50:
+                pikachu_status_message = f"¡Pikachu ha recibido {damage} de daño {icon}, pero sigue con fuerzas!\n"
 
-            elif hp_pikachu > 40:
-                mensaje_estado_pikachu = f"¡Pikachu ha recibido {danho} de daño {icono}!\n"
+            elif pikachu_hp > 40:
+                pikachu_status_message = f"¡Pikachu ha recibido {damage} de daño {icon}!\n"
 
-            elif hp_pikachu > 30:
-                mensaje_estado_pikachu = f"¡Pikachu ha recibido {danho} de daño {icono} y ya se siente resentido!\n"
+            elif pikachu_hp > 30:
+                pikachu_status_message = f"¡Pikachu ha recibido {damage} de daño {icon} y ya se siente resentido!\n"
 
-            elif hp_pikachu > 20:
-                mensaje_estado_pikachu = f"¡Pikachu ha recibido {danho} de daño {icono}. Está debilitado!\n"
+            elif pikachu_hp > 20:
+                pikachu_status_message = f"¡Pikachu ha recibido {damage} de daño {icon}. Está debilitado!\n"
 
-            elif hp_pikachu >= 1:
-                mensaje_estado_pikachu = (f"¡Pikachu ha recibido {danho} de daño {icono}. "
+            elif pikachu_hp >= 1:
+                pikachu_status_message = (f"¡Pikachu ha recibido {damage} de daño {icon}. "
                                           f"Ya aguanta con muy poca energía!\n")
                 
             else:
-                mensaje_estado_pikachu = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
+                pikachu_status_message = f"¡Pikachu ha recibido daño y ha caído derrotado!\n"
 
-            print(mensaje_estado_pikachu)
+            print(pikachu_status_message)
 
 
 
 
         else:
             #No hacer nada.
-            print(f"🤷 ¡{entrenador_pokemon} decide no hacer nada! 🤷\n")
+            print(f"🤷 ¡{pokemon_trainer_name} decide no hacer nada! 🤷\n")
             print("😴 Squirtle se tumba desesperado... 😴\n")
             print("Pikachu no ha recibido  daño. 🤷\n")
 
@@ -414,13 +414,13 @@ while hp_pikachu > 0 and hp_squirtle > 0:
 
         #Barra de vida.
 
-        barras_de_vida_pikachu = int(hp_pikachu * LONGITUD_BARRA / HP_INICIAL_PIKACHU)
-        barras_de_vida_squirtle = int(hp_squirtle * LONGITUD_BARRA / HP_INICIAL_SQUIRTLE)
-        print(f"La vida de Pikachu es de [{"🔶" * barras_de_vida_pikachu}{"🔸" * 
-                                     (LONGITUD_BARRA - barras_de_vida_pikachu)}]({hp_pikachu}/{HP_INICIAL_PIKACHU})hp.")
+        pikachu_hp_bars = int(pikachu_hp * BAR_LENGTH / PIKACHU_INITIAL_HP)
+        squirtle_hp_bars = int(squirtle_hp * BAR_LENGTH / SQUIRTLE_INITIAL_HP)
+        print(f"La vida de Pikachu es de [{"🔶" * pikachu_hp_bars}{"🔸" *
+                                                                  (BAR_LENGTH - pikachu_hp_bars)}]({pikachu_hp}/{PIKACHU_INITIAL_HP})hp.")
 
-        print(f"La vida de Squirtle es de [{"🔷" * barras_de_vida_squirtle}{"🔹" * 
-                               (LONGITUD_BARRA - barras_de_vida_squirtle)}]({hp_squirtle}/{HP_INICIAL_SQUIRTLE})hp. \n")
+        print(f"La vida de Squirtle es de [{"🔷" * squirtle_hp_bars}{"🔹" *
+                                                                    (BAR_LENGTH - squirtle_hp_bars)}]({squirtle_hp}/{SQUIRTLE_INITIAL_HP})hp. \n")
 
         input("\n✅ Enter...")
         os.system("cls")
@@ -430,8 +430,8 @@ while hp_pikachu > 0 and hp_squirtle > 0:
 
     # Mecánica para comprobar si Pikachu ha muerto (Después del ataque de Squirtle).
 
-    if hp_pikachu == 0:
-        print(f"🎉🏆 ¡{entrenador_pokemon.upper()} HA GANADO EL COMBATE CON SU SQUIRTLE! 💦️⚔️")
+    if pikachu_hp == 0:
+        print(f"🎉🏆 ¡{pokemon_trainer_name.upper()} HA GANADO EL COMBATE CON SU SQUIRTLE! 💦️⚔️")
         print("Insertar... 🎵 Música de victoria 🎵")
         input("✅ Enter para cerrar. Enhorabuena! 🎉🏆")
         exit()

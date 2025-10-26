@@ -1,0 +1,75 @@
+1. El Despertar y la Búsqueda del Café
+Te despiertas en tu escritorio, babeando sobre el teclado. El reloj marca las 9:07 AM. ¡Llegas tarde a la Reunión de Visión Estratégica!
+
+Te pones de pie de un salto, sintiendo el pánico. Tienes solo cinco minutos para llegar al décimo piso, donde está la sala de juntas. Antes de salir corriendo, miras a tu desordenado cubículo. Hay dos cosas que podrías tomar:
+
+Recoger la Taza Térmica de la Suerte: Un reluciente recipiente de acero inoxidable que dice "Soy 99% café, 1% persona". (Esta es la variable de inventario: taza = True)
+
+Ignorar la taza: No hay tiempo. Sales con las manos vacías. (Esta es la variable de inventario: taza = False)
+
+Elige una opción (1 o 2).
+
+2. El Encuentro con el Gurú del Networking
+Corres por el pasillo del noveno piso, pero un hombre musculoso y sonriente te intercepta. Es Chad, el Gurú de la Productividad, conocido por sus charlas interminables.
+
+"¡Amigo! ¡Alto ahí! ¡Un poco de 'calentamiento cerebral' antes de la gran reunión!" dice Chad, bloqueando el ascensor. "No me caes bien. Eres demasiado silencioso. Pero te daré una oportunidad. Si fallas este desafío, le diré a la jefa que te vi robando bolígrafos."
+
+Chad te plantea un desafío aritmético inesperado:
+
+"Tengo un número A y otro número B. Multiplícalos en tu cabeza: A×B. ¡Rápido!"
+
+(Aquí es donde usarías random.randint() en Python para generar A y B, y pedirías la respuesta al usuario. A continuación, el resultado inesperado.)
+
+Si la respuesta es INCORRECTA:
+
+Chad se ríe a carcajadas. "¡Qué decepción! Solo era un calentamiento, colega. Pero no importa, sigue. Te veo en el ascensor."
+Conclusión: Te deja pasar, pero te mira con desprecio. Tu vida continúa (por ahora).
+
+Si la respuesta es CORRECTA:
+
+El rostro de Chad se contrae en una máscara de pura furia. "¡Lo hiciste bien! ¡Odio a los cerebritos! ¡Odio a la gente que me recuerda que hay otras cosas además del networking!"
+Chad saca una mini-pistola de dardos tranquilizantes y te dispara al cuello. caes desplomado.
+💀 ¡FIN DE LA HISTORIA! Mueres a manos del Gurú de la Productividad.
+
+3. El Dilema del Desayuno
+Logras escapar de Chad (o sobrevivir a su furia). Llegas al décimo piso y ves la sala de conferencias, pero te das cuenta de que no has comido nada. Tu estómago ruge como un servidor sobrecalentado.
+
+Tienes dos opciones:
+
+Entrar directamente a la reunión: Ignoras el hambre. La concentración es clave.
+
+Ir a la cocina a por un muffin: Es un desvío arriesgado, pero un poco de azúcar te ayudará a sobrevivir la presentación.
+
+Elige una opción (1 o 2).
+
+Si eliges 3.1 (Entrar directamente):
+Entras a la reunión y te sientas. La Jefa, la implacable Sra. Grimson, está justo enfrente de ti, mirándote con intensidad.
+
+(Continúa con el desenlace, Sección 5.)
+
+Si eliges 3.2 (Ir a la cocina):
+Te diriges a la cocina. Tomas un muffin rancio y, al darte la vuelta, te encuentras con la Sra. Grimson, que está mirando fijamente una pila de vasos desechables sucios en la encimera. Su aura es de puro resentimiento corporativo.
+
+"Dime, empleado," sisea la Sra. Grimson. "Veo que tienes una bebida."
+
+(Aquí es donde se comprueba la variable de inventario taza.)
+
+A. Si tienes la Taza Térmica de la Suerte (taza == True):
+
+Le muestras la reluciente taza. "¡Solo agua en mi taza reutilizable, Sra. Grimson! ¡Por el planeta y la eficiencia!"
+La jefa parpadea. "Bien. La sostenibilidad es... encomiable. Vuelve al trabajo."
+Conclusión: Te salva el objeto. Te deja pasar.
+(Continúa con el desenlace, Sección 5.)
+
+B. Si NO tienes la Taza Térmica de la Suerte (taza == False):
+
+Sostienes la botella de agua de plástico desechable que acabas de agarrar.
+La Sra. Grimson grita, con la vena del cuello hinchada: ¡VASOS DESECHABLES! ¡ESTÁN ARRUINANDO EL PLANETA Y MI ESTADO DE ÁNIMO! ¡ESTÁS DESPEDIDO! ¡Y POR CIERTO, ESO ES UN MUFFIN CADUCADO!
+💀 ¡FIN DE LA HISTORIA! Mueres de vergüenza y despido.
+
+5. El Desenlace (Supervivencia)
+Has llegado a la reunión y sobrevivido al encuentro con la Sra. Grimson (o has evitado la cocina por completo). Te sientas en la mesa y te das cuenta de que la reunión es sobre... cómo organizar una fiesta de cumpleaños para el perro del jefe.
+
+"¡Felicidades!" dice la Sra. Grimson. "Parece que has superado la prueba de estrés de la mañana. Ahora, ¿qué color de gorro le ponemos al caniche? Tu opinión es estratégica."
+
+🥳 ¡FIN DE LA HISTORIA! Sobrevives (pero tu futuro laboral es más incierto que nunca).
