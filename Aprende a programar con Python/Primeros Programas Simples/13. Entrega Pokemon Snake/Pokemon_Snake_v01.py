@@ -2,6 +2,7 @@ import os
 import random
 import readchar
 from typing import List, Dict, Union, Tuple
+from wcwidth import wcswidth
 
 # --- CONSTANTES GLOBALES (CONVENCIONES) ---
 
@@ -15,28 +16,29 @@ MAP_FRAME_WIDTH: int = MAP_WIDTH * 2
 
 # Estética y Emotes.
 TITLE: str = "⚔️¡Un combate Pokémon comienza!⚔️"
-PLAYER_EMOJI: str = "🐢 "
+PLAYER_EMOJI: str = "🐢"
 PORTER_EMOJI: str = "🙎‍♂️"
 BOSS_EMOJI: str = "🌟"
 ENEMY_GENERIC_EMOJI: str = "⭐"
-DEFAULT_TAIL_EMOJI: str = "⚪ "
+DEFAULT_TAIL_EMOJI: str = "⚪"
+
 
 # --- ESTRUCTURAS DE DATOS ---
 
 # Caravana de Pokémon (se usarán en el orden en que se derrotan).
 # 1. Bulbasaur (🌿) / 2. Charmander (🔥) / 3. Meowth (😼) / 4. Pikachu (⚡).
-POKEMON_CARAVAN_EMOJIS: List[str] = ["🌿 ", "🔥 ", "😼 ", "⚡ "]
+POKEMON_CARAVAN_EMOJIS: List[str] = ["🌿", "🔥", "😼", "⚡"]
 
 # Datos de Squirtle (Jugador).
 SQUIRTLE_DATA: Dict[str, Union[str, int, Dict]] = {
     "name": "Squirtle",
     "trainer": "Trainer Name Placeholder",  # Se actualiza con el input
-    "turn_text": "⚔️'¡Turno de Squirtle!'💦 + \n",
+    "turn_text": "⚔️'¡Turno de Squirtle!'💦\n",
     "player_turn_emotes": "🔻" * 13 + "\n",
-    "initial_hp": 70,
+    "initial_hp": 80,
     "attacks": {
-        "tackle": 10,
-        "water_gun": 12,
+        "tackle": 11,
+        "water_gun": 13,
         "bubble": 9
     },
 "attack_names_es": {
@@ -50,13 +52,14 @@ SQUIRTLE_DATA: Dict[str, Union[str, int, Dict]] = {
 BULBASAUR_DATA: Dict[str, Union[str, int, Dict]] = {
     "name": "Bulbasaur",
     "trainer": "Erika",
-    "turn_text": "🌿'¡Turno de Bulbasaur!'🌿 + \n",
+    "emoji": "🌿",
+    "turn_text": "🌿'¡Turno de Bulbasaur!'🌿\n",
     "turn_emotes": "🔹" * 12 + "\n",
-    "initial_hp": 75,
+    "initial_hp": 70,
     "attacks": {
-        "tackle": 10,
-        "vine_whip": 11,
-        "leech_seed": 8
+        "tackle": 8,
+        "vine_whip": 9,
+        "leech_seed": 7
     },
     "attack_names_es": {
         "tackle": "Placaje",
@@ -69,13 +72,14 @@ BULBASAUR_DATA: Dict[str, Union[str, int, Dict]] = {
 CHARMANDER_DATA: Dict[str, Union[str, int, Dict]] = {
     "name": "Charmander",
     "trainer": "Blaine",
-    "turn_text": "🔥'¡Turno de Charmander!'🔥 + \n",
+    "emoji": "🔥",
+    "turn_text": "🔥'¡Turno de Charmander!'🔥\n",
     "turn_emotes": "🔹" * 12 + "\n",
-    "initial_hp": 80,
+    "initial_hp": 70,
     "attacks": {
-        "scratch": 10,
+        "scratch": 7,
         "ember": 10,
-        "fire_spin": 9,
+        "fire_spin": 8,
     },
     "attack_names_es": {
         "scratch": "Arañazo",
@@ -87,14 +91,15 @@ CHARMANDER_DATA: Dict[str, Union[str, int, Dict]] = {
 
 BOSS_EEVEE_DATA: Dict[str, Union[str, int, Dict]] = {
     "name": "Eevee Oscuro",
-    "trainer": "Gary (Archienemigo)",
-    "turn_text": "💀'¡Turno de Eevee Oscuro!'🌟 + \n",
+    "trainer": "Gary",
+    "emoji": BOSS_EMOJI,
+    "turn_text": "💀'¡Turno de Eevee Oscuro!'🌟\n",
     "turn_emotes": "🔥" * 15 + "\n",
     "initial_hp": 90,
     "attacks": {
-        "shadow_ball": 10,
-        "quick_attack": 12,
-        "dark_pulse": 8
+        "shadow_ball": 9,
+        "quick_attack": 10,
+        "dark_pulse": 7
     },
     "attack_names_es": {
         "shadow_ball": "Bola Sombra",
@@ -123,37 +128,40 @@ ENEMY_DATA_LOOKUP: Dict[str, Dict] = {
 FIXED_MAP_OBJECTS: List[List[Union[int, str]]] = [
     [5, 1, "BULBASAUR_DATA"],
     [35, 1, "CHARMANDER_DATA"],
-    [20, 17, "PORTERO_DATA"]
+    [20, 17, "PORTERO_DATA"],
+    [20, 15, "BOSS_EEVEE_DATA"]
 ]
 
 # Diseño del Mapa (Árboles = #).
 OBSTACLE_DEFINITION_RAW: str = """\
 #########################################
-#       # ######################### #   #
-# ##### # ####################### # #####
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# #   # # ################### # # #   # #
-# ####### ####################### # #####
-# #       # ###           ######### #   #
-##                                     ##
-#########################################\
+#   #     #########################     #
+#   #     #   #######   ###########   ###
+#  #     ##########################   # #
+#  #     ###########        #######   # #
+#  #####   #############  #########    ##
+#  #       #########      ###########   #
+#  #   # ######################     #   #
+#  #       #   #######################  #
+#   #  ##########       #########   #   #
+#  #     ###################### #   #   #
+#     #   # ###    ###############  #   #
+#   #    #####       #############  #   #
+#  #  #   ######  ################  ##  #
+#     #   ########     ######  #   #    #
+#  ####     #######   ######  #   ####  #
+#  ####   #  ###############  #  ##     #
+#  #         ##           ###           #
+#     #                         #   #   #
+#########################################
 """
 
 # --- VARIABLES DE ESTADO ---
 map_objects: List[List[int]] = []
 obstacle_definition: List[List[str]] = []
 BANDS_OBTAINED: int = 0
+PORTER_DEFEATED: bool = False
+defeated_enemies_list: List[str] = []
 
 
 # --- FUNCIONES DE UTILIDAD DEL MAPA ---
@@ -216,7 +224,6 @@ def check_porter_block(new_position: List[int], bands_obtained: int) -> bool:
 
 
 # --- FUNCIÓN DE COMBATE ---
-
 def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
     """
     Ejecuta el bucle de combate entre Squirtle y un enemigo universal.
@@ -231,10 +238,26 @@ def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
     enemy_turn_text: str = enemy_data["turn_text"]
     enemy_turn_emotes: str = enemy_data["turn_emotes"]
 
+    # --- Obtenemos el emoji del enemigo ---
+    enemy_emoji: str = enemy_data.get("emoji", ENEMY_GENERIC_EMOJI)
+
     # Ataques de Squirtle (Obtenidos de SQUIRTLE_DATA).
     squirtle_tackle: int = SQUIRTLE_DATA["attacks"]["tackle"]
     squirtle_water_gun: int = SQUIRTLE_DATA["attacks"]["water_gun"]
     squirtle_bubble: int = SQUIRTLE_DATA["attacks"]["bubble"]
+
+    # --- Pantalla de presentación del combate ---
+    os.system("cls")
+    print("⚔️" * 18)
+    print("¡UN COMBATE ESTÁ A PUNTO DE COMENZAR!")
+    print("⚔️" * 18)
+    print("\n")
+    print(f"  {SQUIRTLE_DATA['trainer']} saca a {SQUIRTLE_DATA['name']} {PLAYER_EMOJI}")
+    print("\n                VS\n")
+    print(f"  {enemy_data['trainer']} saca a {enemy_name} {enemy_emoji}")
+    print("\n")
+
+    input("✅ Pulsa Enter para comenzar el combate...")
 
     # --- BUCLE DE COMBATE ---
     while enemy_hp > 0 and squirtle_hp > 0:
@@ -365,16 +388,14 @@ def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
 
 
 # --- BUCLE PRINCIPAL ---
-
 def main():
     # Variables de estado que cambian
-    global obstacle_definition, BANDS_OBTAINED, map_objects
+    global obstacle_definition, BANDS_OBTAINED, map_objects, PORTER_DEFEATED, defeated_enemies_list
 
     # Inicialización de Variables de Estado.
     my_position: List[int] = [20, 18]  # [X, Y]
     tail_length: int = 0
     tail: List[List[int]] = []
-    last_direction: str = ""
 
     # Variables de Squirtle (inicializadas).
     squirtle_current_hp: int = SQUIRTLE_DATA["initial_hp"]
@@ -433,12 +454,12 @@ def main():
 
                 # Obstacles (Árboles 🌳).
                 if obstacle_definition[coordinate_y][coordinate_x] == "#":
-                    char_to_draw = "🌳 "
+                    char_to_draw = "🌳"
 
                 # Dibujo del estadio.
                 elif coordinate_y == 17 and 15 <= coordinate_x <= 25 and obstacle_definition[coordinate_y][
                     coordinate_x] == " ":
-                    if coordinate_x == 20:
+                    if coordinate_x == 20 and not PORTER_DEFEATED:
                         char_to_draw = "👑"
                     elif coordinate_x == 15 or coordinate_x == 25:
                         char_to_draw = "🏟️"
@@ -464,8 +485,8 @@ def main():
                 if not is_object:
                     for i, tail_piece in enumerate(tail):
                         if tail_piece[POS_X] == coordinate_x and tail_piece[POS_Y] == coordinate_y:
-                            if i < len(POKEMON_CARAVAN_EMOJIS):
-                                char_to_draw = POKEMON_CARAVAN_EMOJIS[i]
+                            if i < len(defeated_enemies_list):
+                                char_to_draw = defeated_enemies_list[i]
                             else:
                                 char_to_draw = DEFAULT_TAIL_EMOJI
                             break
@@ -474,7 +495,18 @@ def main():
                 if my_position[POS_X] == coordinate_x and my_position[POS_Y] == coordinate_y:
                     char_to_draw = PLAYER_EMOJI
 
-                print(f"{char_to_draw}", end="")
+                # 1. Medimos el ancho real de la celda (devuelve 1 o 2).
+                #    (wcswidth(" ") == 2, wcswidth("🌳") == 2, wcswidth(" ═") == 2, etc.)
+                #    Si tu terminal los ve como 1, wcswidth("🌳") devolverá 1.
+                cell_width = wcswidth(char_to_draw)
+
+                # 2. Calculamos cuánto relleno falta para llegar a 2.
+                #    Si cell_width es 2, padding_needed = 0.
+                #    Si cell_width es 1, padding_needed = 1.
+                padding_needed = 2 - cell_width
+
+                # 3. Imprimimos la celda + el relleno necesario.
+                print(f"{char_to_draw}{' ' * padding_needed}", end="")
 
             print("|")
 
@@ -498,15 +530,6 @@ def main():
             new_position = [(my_position[POS_X] + 1) % MAP_WIDTH, my_position[POS_Y]]
         elif direction == "q":
             break
-
-        # Restricción de 180 grados (Solo si tiene cola).
-        if new_position and tail_length > 0:
-            is_opposite_move: bool = (direction == "w" and last_direction == "s") or \
-                                     (direction == "s" and last_direction == "w") or \
-                                     (direction == "a" and last_direction == "d") or \
-                                     (direction == "d" and last_direction == "a")
-            if is_opposite_move:
-                new_position = None
 
         # --- Lógica de Bloqueo del Guardián ---
         if new_position:
@@ -542,8 +565,20 @@ def main():
 
             # --- Manejo Especial del Portero (No-Combate) ---
             if enemy_to_fight["name"] == STADIUM_PORTER_NAME:
-                # Quitar al portero del mapa para que no vuelva a colisionar con él.
+
+                # Quita al portero del mapa.
                 map_objects.remove(object_to_interact_with)
+
+                # Activar el flag.
+                PORTER_DEFEATED = True
+
+                # Abre la sala secreta y modifica el mapa para borrar los árboles.
+                print("¡Se oye el ruido de unos árboles moviéndose!")
+
+                # Borramos la pared de la fila Y=16
+                obstacle_definition[16][19] = " "
+                obstacle_definition[16][20] = " "
+                obstacle_definition[16][21] = " "
 
             else:
                 # Llamar al combate.
@@ -564,7 +599,9 @@ def main():
                     # Victoria Normal (Ganar Banda/Crecer).
                     else:
                         map_objects.remove(object_to_interact_with)
-                        tail_length += 1
+                        # Añade el emoji del enemigo a defeated_enemies_list.
+                        defeated_enemies_list.append(enemy_to_fight["emoji"])
+                        tail_length = len(defeated_enemies_list)
 
                         # --- MECÁNICA DE CURACIÓN ---
                         # Recupera 70 puntos de vida al ganar, sin exceder el máximo.
@@ -578,17 +615,37 @@ def main():
                 # Lógica de Derrota (Game Over y Reinicio de mapa con Persistencia).
                 elif battle_result == "DERROTA":
                     os.system("cls")
-                    print(f"💀 GAME OVER 💀\n")
 
-                    input("Enter para reiniciar el juego...")
+                    # Comprobar si el que te ha ganado es el Jefe Final.
+                    if enemy_to_fight["name"] == BOSS_EEVEE_DATA["name"]:
+                        print(f"💀💀 GAME OVER 💀💀\n")
+                        print(f"¡Eevee Oscuro {BOSS_EMOJI} es sido demasiado poderoso!")
+                        print("El mundo... se sume en la oscuridad...")
+                        input("\nPulsa Enter para reiniciar el juego...")
 
-                    # Resetear estado de Snake.
-                    my_position = [20, 18]
-                    tail_length = 0
-                    tail = []
+                        # Resetear Juego (Posición y Caravana).
+                        my_position = [20, 18]
+                        tail_length = 0
+                        tail = []
+                        defeated_enemies_list.clear()
+                        squirtle_current_hp = SQUIRTLE_DATA["initial_hp"]
+                        BANDS_OBTAINED = 0
+                        PORTER_DEFEATED = False
+                        obstacle_definition = parse_obstacle_map(OBSTACLE_DEFINITION_RAW)
+                        generate_map_objects()
 
-                    # Resetear vida (Persistencia de la progresión).
-                    squirtle_current_hp = SQUIRTLE_DATA["initial_hp"]
+
+                    # Lógica de derrota normal (si no es el jefe).
+                    else:
+                        print(f"💀 GAME OVER 💀\n")
+                        print(f"¡Has sido derrotado por {enemy_to_fight['name']}!")
+                        input("Enter para reintentarlo...")
+
+                        # Resetear estado del juego.
+                        my_position = [20, 18]
+
+                        # Resetear vida (Persistencia de la progresión).
+                        squirtle_current_hp = SQUIRTLE_DATA["initial_hp"]
 
 
 # Inicialización.
