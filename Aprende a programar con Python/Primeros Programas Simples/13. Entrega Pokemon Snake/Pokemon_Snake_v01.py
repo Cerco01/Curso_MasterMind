@@ -163,6 +163,20 @@ BANDS_OBTAINED: int = 0
 PORTER_DEFEATED: bool = False
 defeated_enemies_list: List[str] = []
 
+# --- FUNCION PARA MAC(posix)/WINDOWS(nt) ---
+def clear_screen():
+    """Limpia la pantalla de la terminal, compatible con Windows y macOS/Linux."""
+    
+    # Para Windows (NT)
+    if os.name == 'nt':
+        _ = os.system('cls')
+    
+    # Para macOS y Linux (POSIX)
+    else:
+        _ = os.system('clear')
+
+    # Nota: Usamos '_ = os.system(...)' para asignar el resultado (que suele ser 0)
+    # y evitar que a veces se imprima en la terminal.
 
 # --- FUNCIONES DE UTILIDAD DEL MAPA ---
 def parse_obstacle_map(raw_map: str) -> List[List[str]]:
@@ -205,18 +219,18 @@ def check_porter_block(new_position: List[int], bands_obtained: int) -> bool:
     if new_position == PORTER_POSITION:
         if bands_obtained < 2:
             # Bloqueo.
-            os.system("cls")
+            clear_screen()
             print(f"{PORTER_EMOJI} {STADIUM_PORTER_NAME} (Guardián):")
             print("¡Alto ahí! Necesitas obtener las 2 Bandas de Entrenador para entrar al Estadio.")
             input("\n✅ Enter para continuar...")
-            os.system("cls")
+            clear_screen()
             return True  # Bloqueado
         else:
             # Paso libre.
-            os.system("cls")
+            clear_screen()
             print(f"{PORTER_EMOJI} {STADIUM_PORTER_NAME}: ¡Adelante, eres digno de enfrentarte a Eevee Oscuro!")
             input("\n✅ Enter para entrar al Estadio...")
-            os.system("cls")
+            clear_screen()
             # No bloqueado.
             return False
 
@@ -247,7 +261,7 @@ def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
     squirtle_bubble: int = SQUIRTLE_DATA["attacks"]["bubble"]
 
     # --- Pantalla de presentación del combate ---
-    os.system("cls")
+    clear_screen()
     print("⚔️" * 18)
     print("¡UN COMBATE ESTÁ A PUNTO DE COMENZAR!")
     print("⚔️" * 18)
@@ -261,7 +275,7 @@ def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
 
     # --- BUCLE DE COMBATE ---
     while enemy_hp > 0 and squirtle_hp > 0:
-        os.system("cls")
+        clear_screen()
 
         # --------------------------------------------- Turno CPU (Enemigo). -------------------------------------------
 
@@ -304,7 +318,7 @@ def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
             f"({squirtle_hp}/{squirtle_initial_hp})hp. \n")
 
         input("✅ Enter...")
-        os.system("cls")
+        clear_screen()
 
         # --- Comprobar derrota del jugador ---
         if squirtle_hp == 0:
@@ -328,7 +342,7 @@ def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
             squirtle_attack_input = (input("Introduce la letra del ataque (🤜[P], 💦[A], 🫧[B] o 🤷[N]): ")
                                                                                                     .strip().upper())
 
-        os.system("cls")
+        clear_screen()
         print(SQUIRTLE_DATA["player_turn_emotes"] + SQUIRTLE_DATA["turn_text"] + SQUIRTLE_DATA["player_turn_emotes"])
 
         # Mecánica 10% probabilidad de esquivar del enemigo.
@@ -375,7 +389,7 @@ def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
                 f"({squirtle_hp}/{squirtle_initial_hp})hp. \n")
 
             input("\n✅ Enter...")
-            os.system("cls")
+            clear_screen()
 
         # --- Comprobar victoria del jugador ---
         if enemy_hp == 0:
@@ -422,13 +436,13 @@ def main():
                                     `'                            '-._| 
     """)
     input("✅ Okay... ¡Let's Go!")
-    os.system("cls")
+    clear_screen()
 
     # Asignación de Nombre e Introducción.
     my_pokemon_trainer_name: str = input("🧑 ¿Cual es el nombre del entrenador Pokemon de hoy?\n\n")
     SQUIRTLE_DATA["trainer"] = my_pokemon_trainer_name
 
-    os.system("cls")
+    clear_screen()
 
     # Contexto e Instrucciones.
     print(f"🌟 ¡Bienvenido a la Liga Pokémon Snake, {my_pokemon_trainer_name}! 🌟")
@@ -437,13 +451,13 @@ def main():
     print(f"\n🧑 ¡{my_pokemon_trainer_name} con su Squirtle comienzan esta aventura!💦\n")
 
     input("✅ Pulsa Enter para iniciar el mapa...")
-    os.system("cls")
+    clear_screen()
 
     # Main Loop.
     while True:
 
         # --- Dibujado del Mapa ---
-        os.system("cls")
+        clear_screen()
         print("Bienvenido a Pokémon Snake.\n" + "+" + "-" * MAP_FRAME_WIDTH + "+")
 
         for coordinate_y in range(MAP_HEIGHT):
@@ -589,7 +603,7 @@ def main():
 
                     # Comprobación de Victoria Final.
                     if enemy_to_fight["name"] == BOSS_EEVEE_DATA["name"]:
-                        os.system("cls")
+                        clear_screen()
                         print("🌟¡FELICIDADES, HAS DERROTADO A EEVEE OSCURO!🌟")
                         print(f"¡{SQUIRTLE_DATA['trainer'].upper()} es ahora el CAMPEÓN DE LA LIGA POKÉMON SNAKE!")
                         print(f"Puntuación final: {tail_length}")
@@ -614,7 +628,7 @@ def main():
 
                 # Lógica de Derrota (Game Over y Reinicio de mapa con Persistencia).
                 elif battle_result == "DERROTA":
-                    os.system("cls")
+                    clear_screen()
 
                     # Comprobar si el que te ha ganado es el Jefe Final.
                     if enemy_to_fight["name"] == BOSS_EEVEE_DATA["name"]:
