@@ -4,6 +4,32 @@ import readchar
 from typing import List, Dict, Union, Tuple
 from wcwidth import wcswidth
 
+"""
+===================================================================
+== NOTA PARA EL CORRECTOR / EJECUCIÓN ==
+===================================================================
+
+Este script requiere TRES (3) librerías externas para funcionar.
+
+Asegúrese de instalarlas antes de ejecutar (se recomienda un venv):
+
+    pip install readchar wcwidth
+
+-------------------------------------------------------------------
+NOTAS DE COMPATIBILIDAD:
+
+1.  Versión de Python: 
+    Desarrollado y probado en Python 3.12 y 3.13.
+
+2.  Limpieza de Pantalla (cls/clear):
+    Se utiliza una función `clear_screen()` personalizada 
+    (en lugar de solo `os.system('cls')`) para que este
+    mismo archivo .py funcione en Windows, macOS y Linux
+    sin necesidad de modificaciones.
+
+===================================================================
+"""
+
 # --- CONSTANTES GLOBALES (CONVENCIONES) ---
 
 # Posiciones y Mapa.
@@ -446,7 +472,7 @@ def main():
 
     # Contexto e Instrucciones.
     print(f"🌟 ¡Bienvenido a la Liga Pokémon Snake, {my_pokemon_trainer_name}! 🌟")
-    print(f"\nTu misión es guiar a Squirtle{PLAYER_EMOJI} a través del laberinto. (Con WASD de tu teclado).")
+    print(f"\nTu misión es guiar a Squirtle {PLAYER_EMOJI} a través del laberinto. (Con WASD de tu teclado).")
     print("El objetivo es obtener las 2 Bandas de Entrenador (⭐) y desafiar al Jefe Final (👑) en el Estadio.")
     print(f"\n🧑 ¡{my_pokemon_trainer_name} con su Squirtle comienzan esta aventura!💦\n")
 
