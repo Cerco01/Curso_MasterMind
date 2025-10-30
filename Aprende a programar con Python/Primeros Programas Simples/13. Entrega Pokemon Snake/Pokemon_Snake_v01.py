@@ -270,6 +270,7 @@ def start_battle(squirtle_current_hp: int, enemy_data: Dict) -> Tuple[int, str]:
     print("\n                VS\n")
     print(f"  {enemy_data['trainer']} saca a {enemy_name} {enemy_emoji}")
     print("\n")
+    print(f"ES EL TURNO DE {enemy_name.upper()}! ⚔️\n")
 
     input("✅ Pulsa Enter para comenzar el combate...")
 
