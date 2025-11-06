@@ -78,6 +78,10 @@ Malas respuestas (evitar):
 - Mantener estilo existente; evitar reformateos masivos no relacionados.
 - Sin “magic numbers”; usar constantes descriptivas.
 - Evitar nuevos globales; preferir contenedores de estado/`dataclass`.
+- **Atención a los tests al renombrar:** Al refactorizar (especialmente
+    renombrar archivos), verificar manualmente que los *paths* de los *mocks*
+    (ej. `mocker.patch('mi_modulo_antiguo...')`) se han actualizado en los
+    tests, ya que las herramientas automáticas suelen fallar.
 
 ## Estilo y calidad
 - Tipado en funciones públicas y estructuras principales.

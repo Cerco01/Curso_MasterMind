@@ -1,20 +1,21 @@
 import os
 import random
-import readchar
-from typing import List, Dict, Union, Tuple
-from wcwidth import wcswidth
-from enum import Enum, auto
 from dataclasses import dataclass, field
+from enum import Enum, auto
+from typing import Dict, List, Tuple, Union
+
+import readchar
+from wcwidth import wcswidth
 
 """
 ===================================================================
-== Pokémon Snake v0.1 ==
+== Pokémon Snake ==
 ===================================================================
 
 Juego de Snake con temática Pokémon desarrollado en Python.
 
 -------------------------------------------------------------------
-NOTA PARA EL CORRECTOR
+NOTA PARA EL PROFESOR
 -------------------------------------------------------------------
 
 1. INSTALACIÓN DE DEPENDENCIAS
@@ -41,7 +42,7 @@ NOTA PARA EL CORRECTOR
     - **KISS (Mantenlo simple):** Prioriza la claridad en algoritmos
         como el cálculo de movimiento del jugador.
 
-3. NOTAS DE COMPATIBilidad
+3. NOTAS DE COMPATIBILIDAD
     - **Python**: Desarrollado y probado en Python 3.12 y 3.13.
     - **Terminal**: Para una visualización correcta, se recomienda ejecutar
         el script en una terminal nativa (como la Terminal de Windows o
@@ -50,6 +51,24 @@ NOTA PARA EL CORRECTOR
     - **Emojis**: La apariencia de los emojis puede variar entre sistemas
         operativos.
 
+4. VALIDACIÓN Y CALIDAD (PROCESO DE DESARROLLO)
+    Como complemento al diseño POO (punto 2), la robustez y calidad
+    del código fueron validadas rigurosamente en tres niveles:
+
+    1. **Calidad de Estilo (Linter/Formatter):** El código ha pasado
+        `ruff` (para formateo y linting), asegurando un estilo
+        consistente y corrigiendo errores de formato (ej. E501).
+
+    2. **Calidad de Tipado (Type-Checking):** El código ha pasado
+        `mypy` (con la configuración de `pyproject.toml`),
+        asegurando la consistencia de los tipos de datos.
+
+    3. **Pruebas Funcionales (pytest):** Se utilizó una suite de `pytest`
+        (no adjunta) para validar la lógica central. Esta cubrió:
+        - **Pruebas Unitarias**: Movimiento y parsing del mapa.
+        - **Pruebas de Integración**: Colisiones y reglas (ej. portero).
+        - **Pruebas con Mocking**: Flujo de batalla completo.
+
 ===================================================================
 """
 
@@ -57,6 +76,7 @@ NOTA PARA EL CORRECTOR
 # --- ENUMERACIÓN PARA CLAVES DE DATOS ---
 class EnemyDataKey(Enum):
     """Claves seguras para identificar datos de enemigos."""
+
     BULBASAUR = auto()
     CHARMANDER = auto()
     PORTERO = auto()
@@ -85,24 +105,22 @@ ENEMY_GENERIC_EMOJI: str = "⭐"
 DEFAULT_TAIL_EMOJI: str = "⚪"
 
 # Mapa de selección de ataques del jugador.
-ATTACK_CHOICE_MAP: Dict[str, str] = {
-    "P": "tackle",
-    "A": "water_gun",
-    "B": "bubble"
-}
+ATTACK_CHOICE_MAP: Dict[str, str] = {"P": "tackle", "A": "water_gun", "B": "bubble"}
 
 # Mapa de emojis para objetos especiales del mapa.
 SPECIAL_EMOJI_MAP: Dict[EnemyDataKey, str] = {
     EnemyDataKey.PORTERO: PORTER_EMOJI,
-    EnemyDataKey.BOSS_EEVEE: BOSS_EMOJI
+    EnemyDataKey.BOSS_EEVEE: BOSS_EMOJI,
 }
 
 
 # --- ESTRUCTURAS DE DATOS (DATACLASSES) ---
 
+
 @dataclass
 class PokemonData:
     """Estructura para almacenar los datos de un Pokémon o personaje."""
+
     name: str
     initial_hp: int
     attacks: Dict[str, int] = field(default_factory=dict)
@@ -121,16 +139,8 @@ SQUIRTLE_DATA = PokemonData(
     turn_text="⚔️'¡Turno de Squirtle!'💦\n",
     player_turn_emotes="🔻" * 13 + "\n",
     initial_hp=80,
-    attacks={
-        "tackle": 11,
-        "water_gun": 13,
-        "bubble": 9
-    },
-    attack_names_es={
-        "tackle": "Placaje",
-        "water_gun": "Pistola Agua",
-        "bubble": "Burbuja"
-    }
+    attacks={"tackle": 11, "water_gun": 13, "bubble": 9},
+    attack_names_es={"tackle": "Placaje", "water_gun": "Pistola Agua", "bubble": "Burbuja"},
 )
 
 # Datos de los Enemigos Fijos.
@@ -141,16 +151,8 @@ BULBASAUR_DATA = PokemonData(
     turn_text="🌿'¡Turno de Bulbasaur!'🌿\n",
     turn_emotes="🔹" * 12 + "\n",
     initial_hp=70,
-    attacks={
-        "tackle": 8,
-        "vine_whip": 9,
-        "leech_seed": 7
-    },
-    attack_names_es={
-        "tackle": "Placaje",
-        "vine_whip": "Látigo Cepa",
-        "leech_seed": "Drenadoras"
-    }
+    attacks={"tackle": 8, "vine_whip": 9, "leech_seed": 7},
+    attack_names_es={"tackle": "Placaje", "vine_whip": "Látigo Cepa", "leech_seed": "Drenadoras"},
 )
 
 CHARMANDER_DATA = PokemonData(
@@ -165,11 +167,7 @@ CHARMANDER_DATA = PokemonData(
         "ember": 10,
         "fire_spin": 8,
     },
-    attack_names_es={
-        "scratch": "Arañazo",
-        "ember": "Ascuas",
-        "fire_spin": "Giro Fuego"
-    }
+    attack_names_es={"scratch": "Arañazo", "ember": "Ascuas", "fire_spin": "Giro Fuego"},
 )
 
 BOSS_EEVEE_DATA = PokemonData(
@@ -179,16 +177,12 @@ BOSS_EEVEE_DATA = PokemonData(
     turn_text="💀'¡Turno de Eevee Oscuro!'🌟\n",
     turn_emotes="🔥" * 15 + "\n",
     initial_hp=90,
-    attacks={
-        "shadow_ball": 9,
-        "quick_attack": 10,
-        "dark_pulse": 7
-    },
+    attacks={"shadow_ball": 9, "quick_attack": 10, "dark_pulse": 7},
     attack_names_es={
         "shadow_ball": "Bola Sombra",
         "quick_attack": "Ataque Rápido",
-        "dark_pulse": "Pulso Oscuro"
-    }
+        "dark_pulse": "Pulso Oscuro",
+    },
 )
 
 # Datos del portero.
@@ -201,7 +195,7 @@ ENEMY_DATA_LOOKUP: Dict[EnemyDataKey, PokemonData] = {
     EnemyDataKey.BULBASAUR: BULBASAUR_DATA,
     EnemyDataKey.CHARMANDER: CHARMANDER_DATA,
     EnemyDataKey.PORTERO: PORTER_DATA,
-    EnemyDataKey.BOSS_EEVEE: BOSS_EEVEE_DATA
+    EnemyDataKey.BOSS_EEVEE: BOSS_EEVEE_DATA,
 }
 
 
@@ -210,7 +204,7 @@ FIXED_MAP_OBJECTS: List[Tuple[EnemyDataKey, int, int]] = [
     (EnemyDataKey.BULBASAUR, 5, 1),
     (EnemyDataKey.CHARMANDER, 35, 1),
     (EnemyDataKey.PORTERO, 20, 17),
-    (EnemyDataKey.BOSS_EEVEE, 20, 15)
+    (EnemyDataKey.BOSS_EEVEE, 20, 15),
 ]
 
 
@@ -251,8 +245,10 @@ class GameState:
         self.bands_obtained: int = 0
         self.porter_defeated: bool = False
         self.map_objects: List[Tuple[EnemyDataKey, int, int]] = []
-        self.obstacle_definition: List[List[str]] = self._parse_obstacle_map(self.OBSTACLE_DEFINITION_RAW)
-        self.defeated_enemies_list: List[str] = [] # Añade esta línea
+        self.obstacle_definition: List[List[str]] = self._parse_obstacle_map(
+            self.OBSTACLE_DEFINITION_RAW
+        )
+        self.defeated_enemies_list: List[str] = []  # Añade esta línea
 
         # Inicializa los objetos del mapa
         self.generate_map_objects()
@@ -277,7 +273,17 @@ class GameState:
 
     def reset_game(self) -> None:
         """Reinicia el estado del juego a sus valores iniciales."""
-        self.__init__()
+        self.my_position = [20, 18]
+        self.tail = []
+        self.tail_length = 0
+        self.squirtle_current_hp = SQUIRTLE_DATA.initial_hp
+        self.bands_obtained = 0
+        self.porter_defeated = False
+        self.map_objects = []
+        self.defeated_enemies_list = []
+
+        # Vuelve a generar los objetos del mapa
+        self.generate_map_objects()
 
     def reset_player_after_defeat(self) -> None:
         """Reinicia solo la posición y la vida del jugador tras una derrota normal."""
@@ -288,6 +294,7 @@ class GameState:
 # --- CLASE DE GESTIÓN DE ENTRADA ---
 class InputHandler:
     """Gestiona la entrada del usuario."""
+
     @staticmethod
     def get_direction() -> str:
         """Lee un carácter del teclado y lo devuelve en minúsculas."""
@@ -325,16 +332,20 @@ class Renderer:
 
         # Las comprobaciones se hacen en orden de prioridad de dibujado.
         char = self._get_obstacle_char(position, game_state)
-        if char: return char
+        if char:
+            return char
 
         char = self._get_stadium_char(position, game_state)
-        if char: return char
+        if char:
+            return char
 
         char = self._get_map_object_char(position, game_state)
-        if char: return char
+        if char:
+            return char
 
         char = self._get_tail_char(position, game_state)
-        if char: return char
+        if char:
+            return char
 
         if position == game_state.my_position:
             return PLAYER_EMOJI
@@ -353,7 +364,7 @@ class Renderer:
         """Devuelve el carácter de la zona del estadio si corresponde."""
         x, y = position
         is_in_obstacle_map = game_state.obstacle_definition[y][x] == " "
-        is_stadium_zone = (y == 17 and 15 <= x <= 25 and is_in_obstacle_map)
+        is_stadium_zone = y == 17 and 15 <= x <= 25 and is_in_obstacle_map
         if not is_stadium_zone:
             return None
         if x == 20 and not game_state.porter_defeated:
@@ -383,10 +394,32 @@ class Renderer:
                 return DEFAULT_TAIL_EMOJI
         return None
 
+    @staticmethod
+    def render_hp_bars(
+        player_name: str,
+        player_hp: int,
+        player_max_hp: int,
+        enemy_name: str,
+        enemy_hp: int,
+        enemy_max_hp: int,
+    ) -> None:
+        """Dibuja las barras de vida para ambos combatientes."""
+        player_hp_bars = int(player_hp * BAR_LENGTH / player_max_hp)
+        enemy_hp_bars = int(enemy_hp * BAR_LENGTH / enemy_max_hp)
+
+        enemy_bar = f"[{'🔶' * enemy_hp_bars}{'🔸' * (BAR_LENGTH - enemy_hp_bars)}]"
+        player_bar = f"[{'🔷' * player_hp_bars}{'🔹' * (BAR_LENGTH - player_hp_bars)}]"
+
+        print(f"La vida de {enemy_name} es de {enemy_bar} ({enemy_hp}/{enemy_max_hp})hp.")
+        print(f"La vida de {player_name} es de {player_bar} ({player_hp}/{player_max_hp})hp. \n")
+
 
 # --- CLASE DE LÓGICA DEL JUEGO ---
 class GameLogic:
-    """Contiene todas las reglas del juego, incluyendo la lógica de movimiento, interacciones y combate."""
+    """
+    Contiene todas las reglas del juego, incluyendo la lógica
+    de movimiento, interacciones y combate.
+    """
 
     def __init__(self):
         """Inicializa la lógica del juego y pre-calcula valores necesarios."""
@@ -400,7 +433,7 @@ class GameLogic:
                 return [x, y]
         return [-1, -1]  # Devuelve una posición inválida si no se encuentra.
 
-    def update_state(self, direction: str, game_state: GameState) -> None:
+    def update_state(self, direction: str, game_state: GameState, renderer: Renderer) -> None:
         """
         Actualiza el estado del juego basado en la dirección y las reglas.
 
@@ -410,7 +443,9 @@ class GameLogic:
         new_position = self._compute_new_position(direction, game_state.my_position)
 
         if new_position:
-            is_obstacle = game_state.obstacle_definition[new_position[POS_Y]][new_position[POS_X]] == "#"
+            is_obstacle = (
+                game_state.obstacle_definition[new_position[POS_Y]][new_position[POS_X]] == "#"
+            )
 
             if self._is_blocked_by_porter(new_position, game_state):
                 # No te muevas si el portero te bloquea
@@ -418,9 +453,11 @@ class GameLogic:
             elif not is_obstacle:
                 self._apply_movement(new_position, game_state)
 
-        object_to_interact_with = self._get_object_at_position(game_state.map_objects, game_state.my_position)
+        object_to_interact_with = self._get_object_at_position(
+            game_state.map_objects, game_state.my_position
+        )
         if object_to_interact_with:
-            self._handle_interaction(object_to_interact_with, game_state)
+            self._handle_interaction(object_to_interact_with, game_state, renderer)
 
     @staticmethod
     def _compute_new_position(direction: str, my_position: List[int]) -> Union[List[int], None]:
@@ -439,7 +476,7 @@ class GameLogic:
     def _apply_movement(new_position: List[int], game_state: GameState) -> None:
         """Aplica el movimiento al estado del juego."""
         game_state.tail.insert(0, game_state.my_position.copy())
-        game_state.tail = game_state.tail[:game_state.tail_length]
+        game_state.tail = game_state.tail[: game_state.tail_length]
         game_state.my_position = new_position
 
     def _is_blocked_by_porter(self, new_position: List[int], game_state: GameState) -> bool:
@@ -450,11 +487,13 @@ class GameLogic:
         if new_position == self.porter_position and game_state.bands_obtained < REQUIRED_BANDS:
             clear_screen()
             print(f"{PORTER_EMOJI} {STADIUM_PORTER_NAME} (Guardián):")
-            print(f"¡Alto ahí! Necesitas obtener las {REQUIRED_BANDS} Bandas de Entrenador para entrar al Estadio.")
+            print(
+                f"¡Alto ahí! Necesitas obtener las {REQUIRED_BANDS} Bandas "
+                f"de Entrenador para entrar al Estadio."
+            )
             input("\n✅ Pulsa Enter para continuar...")
             return True
         return False
-
 
     # --- MÉTODOS DE LÓGICA DE INTERACCIÓN Y COMBATE ---
 
@@ -466,12 +505,17 @@ class GameLogic:
         # Solo procedemos si las bandas están obtenidas y el portero no ha sido derrotado.
         if game_state.bands_obtained >= REQUIRED_BANDS and not game_state.porter_defeated:
             clear_screen()
-            print(f"{PORTER_EMOJI} {STADIUM_PORTER_NAME}: ¡Adelante, eres digno de enfrentarte a Eevee Oscuro!\n"
-                    "¡Mucha suerte, la necesitarás!")
+            print(
+                f"{PORTER_EMOJI} {STADIUM_PORTER_NAME}: ¡Adelante, eres digno de "
+                f"enfrentarte a Eevee Oscuro!\n"
+                "¡Mucha suerte, la necesitarás!"
+            )
             input("\n✅ Pulsa Enter para entrar al Estadio...")
 
             # Elimina al portero del mapa de una forma más directa.
-            game_state.map_objects = [obj for obj in game_state.map_objects if obj[0] != EnemyDataKey.PORTERO]
+            game_state.map_objects = [
+                obj for obj in game_state.map_objects if obj[0] != EnemyDataKey.PORTERO
+            ]
 
             game_state.porter_defeated = True
             # Abre el camino en el mapa de obstáculos.
@@ -480,36 +524,40 @@ class GameLogic:
             game_state.obstacle_definition[16][21] = " "
 
     @staticmethod
-    def _render_hp_bars(player_name: str, player_hp: int, player_max_hp: int,
-                        enemy_name: str, enemy_hp: int, enemy_max_hp: int) -> None:
-        """Dibuja las barras de vida para ambos combatientes."""
-        player_hp_bars = int(player_hp * BAR_LENGTH / player_max_hp)
-        enemy_hp_bars = int(enemy_hp * BAR_LENGTH / enemy_max_hp)
-
-        enemy_bar = f"[{'🔶' * enemy_hp_bars}{'🔸' * (BAR_LENGTH - enemy_hp_bars)}]"
-        player_bar = f"[{'🔷' * player_hp_bars}{'🔹' * (BAR_LENGTH - player_hp_bars)}]"
-
-        print(f"La vida de {enemy_name} es de {enemy_bar} ({enemy_hp}/{enemy_max_hp})hp.")
-        print(f"La vida de {player_name} es de {player_bar} ({player_hp}/{player_max_hp})hp. \n")
-
-    @staticmethod
     def _present_battle(squirtle_data: PokemonData, enemy_data: PokemonData) -> None:
         """Muestra la pantalla de presentación del combate."""
         clear_screen()
-        print(("⚔️" * 18) + "\n" + "¡UN COMBATE ESTÁ A PUNTO DE COMENZAR!" + "\n" + ("⚔️" * 18))
-        print(f"{squirtle_data.trainer} saca a {squirtle_data.name} {PLAYER_EMOJI}\n                VS\n")
-        print(f"{enemy_data.trainer} saca a {enemy_data.name} {enemy_data.emoji}\nES EL TURNO DE {enemy_data.name.upper()}! ⚔️\n"
-                f"✅ Pulsa Enter para comenzar el combate...")
+        print("⚔️" * 18)
+        print("¡UN COMBATE ESTÁ A PUNTO DE COMENZAR!")
+        print("⚔️" * 18)
+        print(
+            f"{squirtle_data.trainer} saca a {squirtle_data.name} {PLAYER_EMOJI}\n"
+            f"                VS\n"
+        )
+        print(
+            f"{enemy_data.trainer} saca a {enemy_data.name} {enemy_data.emoji}\n"
+            f"ES EL TURNO DE {enemy_data.name.upper()}! ⚔️\n"
+            f"✅ Pulsa Enter para comenzar el combate..."
+        )
         input()
 
     @staticmethod
     def _get_player_attack_choice(squirtle_data: PokemonData) -> str:
         """Muestra las opciones y gestiona la entrada del usuario para el ataque."""
-        print(squirtle_data.player_turn_emotes + squirtle_data.turn_text + squirtle_data.player_turn_emotes +
-                "🤜 [P]lacaje.\n💦 Pistola [A]gua.\n🫧 [B]urbuja.\n 🤷[N]o hacer nada.\n" + squirtle_data.player_turn_emotes)
+        print(
+            squirtle_data.player_turn_emotes
+            + squirtle_data.turn_text
+            + squirtle_data.player_turn_emotes
+            + "🤜 [P]lacaje.\n💦 Pistola [A]gua.\n🫧 [B]urbuja.\n 🤷[N]o hacer nada.\n"
+            + squirtle_data.player_turn_emotes
+        )
         choice = ""
         while choice not in ["P", "A", "B", "N"]:
-            choice = input("Introduce la letra del ataque (🤜[P], 💦[A], 🫧[B] o 🤷[N]): ").strip().upper()
+            choice = (
+                input("Introduce la letra del ataque (🤜[P], 💦[A], 🫧[B] o 🤷[N]): ")
+                .strip()
+                .upper()
+            )
             if choice not in ["P", "A", "B", "N"]:
                 print("Opción no válida. Por favor, elige una de las letras indicadas.")
         return choice
@@ -524,18 +572,28 @@ class GameLogic:
         if random.randint(1, 10) == 1:
             print(f"\n🌀Pero... ¡¡¡SQUIRTLE ESQUIVÓ EL ATAQUE DE {enemy_data.name.upper()}!!!💨\n")
         else:
-            print(f"¡{enemy_data.name} usa {attack_name_es.upper()}! Recibes {enemy_damage} de daño.\n")
+            print(
+                f"¡{enemy_data.name} usa {attack_name_es.upper()}! "
+                f"Recibes {enemy_damage} de daño.\n"
+            )
             squirtle_hp -= enemy_damage
             squirtle_hp = max(squirtle_hp, 0)
         return squirtle_hp
 
-    def _execute_player_turn(self, enemy_hp: int, squirtle_data: PokemonData, enemy_data: PokemonData) -> int:
+    def _execute_player_turn(
+        self, enemy_hp: int, squirtle_data: PokemonData, enemy_data: PokemonData
+    ) -> int:
         """Ejecuta la lógica del turno del jugador."""
         clear_screen()
         attack_choice = self._get_player_attack_choice(squirtle_data)
         clear_screen()
-        print(squirtle_data.player_turn_emotes + "\n" +
-                squirtle_data.turn_text + "\n" + squirtle_data.player_turn_emotes)
+        print(
+            squirtle_data.player_turn_emotes
+            + "\n"
+            + squirtle_data.turn_text
+            + "\n"
+            + squirtle_data.player_turn_emotes
+        )
 
         # Si el enemigo esquiva, termina el turno antes de calcular el daño.
         if random.randint(1, 10) == 1 and attack_choice != "N":
@@ -556,22 +614,40 @@ class GameLogic:
 
         return enemy_hp
 
-    def _start_battle(self, game_state: GameState, enemy_data: PokemonData,
-                        object_ref: Tuple[EnemyDataKey, int, int], data_key: EnemyDataKey) -> None:
+    def _start_battle(
+        self,
+        game_state: GameState,
+        enemy_data: PokemonData,
+        object_ref: Tuple[EnemyDataKey, int, int],
+        data_key: EnemyDataKey,
+        renderer: Renderer,
+    ) -> None:
         """Ejecuta el bucle de combate y procesa el resultado."""
         squirtle_hp = game_state.squirtle_current_hp
         enemy_hp = enemy_data.initial_hp
         self._present_battle(SQUIRTLE_DATA, enemy_data)
         while squirtle_hp > 0 and enemy_hp > 0:
             squirtle_hp = self._execute_enemy_turn(squirtle_hp, enemy_data)
-            self._render_hp_bars(SQUIRTLE_DATA.name, squirtle_hp, SQUIRTLE_DATA.initial_hp,
-                                    enemy_data.name, enemy_hp, enemy_data.initial_hp)
+            renderer.render_hp_bars(
+                SQUIRTLE_DATA.name,
+                squirtle_hp,
+                SQUIRTLE_DATA.initial_hp,
+                enemy_data.name,
+                enemy_hp,
+                enemy_data.initial_hp,
+            )
             if squirtle_hp <= 0:
                 break
             input("✅ Enter...")
             enemy_hp = self._execute_player_turn(enemy_hp, SQUIRTLE_DATA, enemy_data)
-            self._render_hp_bars(SQUIRTLE_DATA.name, squirtle_hp, SQUIRTLE_DATA.initial_hp,
-                                    enemy_data.name, enemy_hp, enemy_data.initial_hp)
+            renderer.render_hp_bars(
+                SQUIRTLE_DATA.name,
+                squirtle_hp,
+                SQUIRTLE_DATA.initial_hp,
+                enemy_data.name,
+                enemy_hp,
+                enemy_data.initial_hp,
+            )
             if enemy_hp <= 0:
                 break
             input("\n✅ Enter...")
@@ -583,8 +659,9 @@ class GameLogic:
             self._process_defeat(game_state, enemy_data, data_key)
 
     @staticmethod
-    def _get_object_at_position(map_objects_local: List[Tuple[EnemyDataKey, int, int]],
-                                position: List[int]) -> Union[Tuple[EnemyDataKey, int, int], None]:
+    def _get_object_at_position(
+        map_objects_local: List[Tuple[EnemyDataKey, int, int]], position: List[int]
+    ) -> Union[Tuple[EnemyDataKey, int, int], None]:
         """Busca un objeto en la lista que coincida con la posición dada."""
         for obj in map_objects_local:
             _, obj_x, obj_y = obj
@@ -593,8 +670,9 @@ class GameLogic:
         return None
 
     @staticmethod
-    def _handle_normal_victory(game_state: GameState, enemy_data: PokemonData,
-                                object_ref: Tuple[EnemyDataKey, int, int]) -> None:
+    def _handle_normal_victory(
+        game_state: GameState, enemy_data: PokemonData, object_ref: Tuple[EnemyDataKey, int, int]
+    ) -> None:
         """Actualiza el estado tras una victoria normal y muestra el mensaje de victoria."""
         clear_screen()
         print(f"🎉 ¡VICTORIA! Has derrotado a {enemy_data.name} ({enemy_data.trainer}) 🎉\n")
@@ -611,12 +689,18 @@ class GameLogic:
         # Cura al jugador.
         new_hp = game_state.squirtle_current_hp + HEAL_AMOUNT_ON_VICTORY
         game_state.squirtle_current_hp = min(new_hp, SQUIRTLE_DATA.initial_hp)
-        print(f"Squirtle recupera {HEAL_AMOUNT_ON_VICTORY} HP. Ahora tiene {game_state.squirtle_current_hp}/{SQUIRTLE_DATA.initial_hp} HP.\n")
+        print(
+            f"Squirtle recupera {HEAL_AMOUNT_ON_VICTORY} HP. Ahora tiene "
+            f"{game_state.squirtle_current_hp}/{SQUIRTLE_DATA.initial_hp} HP.\n"
+        )
 
         # Otorga bandas.
         if game_state.bands_obtained < REQUIRED_BANDS:
             game_state.bands_obtained += 1
-            print(f"¡Has obtenido una Banda de Entrenador! Total: {game_state.bands_obtained}/{REQUIRED_BANDS} 🏅\n")
+            print(
+                f"¡Has obtenido una Banda de Entrenador! Total: "
+                f"{game_state.bands_obtained}/{REQUIRED_BANDS} 🏅\n"
+            )
         else:
             print("Ya tienes todas las Bandas de Entrenador necesarias.\n")
 
@@ -647,15 +731,22 @@ class GameLogic:
         input("\nPulsa Enter para reiniciar el juego...")
         game_state.reset_game()
 
-    def _process_victory(self, game_state: GameState, enemy_data: PokemonData,
-                            object_ref: Tuple[EnemyDataKey, int, int], data_key: EnemyDataKey) -> None:
+    def _process_victory(
+        self,
+        game_state: GameState,
+        enemy_data: PokemonData,
+        object_ref: Tuple[EnemyDataKey, int, int],
+        data_key: EnemyDataKey,
+    ) -> None:
         """Distribuye la lógica de victoria."""
         if data_key == EnemyDataKey.BOSS_EEVEE:
             self._handle_final_victory()
         else:
             self._handle_normal_victory(game_state, enemy_data, object_ref)
 
-    def _process_defeat(self, game_state: GameState, enemy_data: PokemonData, data_key: EnemyDataKey) -> None:
+    def _process_defeat(
+        self, game_state: GameState, enemy_data: PokemonData, data_key: EnemyDataKey
+    ) -> None:
         """Distribuye la lógica de derrota."""
         clear_screen()
         if data_key == EnemyDataKey.BOSS_EEVEE:
@@ -663,8 +754,12 @@ class GameLogic:
         else:
             self._handle_normal_defeat(game_state, enemy_data)
 
-    def _handle_interaction(self, object_to_interact_with: Tuple[EnemyDataKey, int, int],
-                            game_state: GameState) -> None:
+    def _handle_interaction(
+        self,
+        object_to_interact_with: Tuple[EnemyDataKey, int, int],
+        game_state: GameState,
+        renderer: Renderer,
+    ) -> None:
         """Gestiona la interacción con objetos."""
         data_key = object_to_interact_with[0]
 
@@ -675,13 +770,22 @@ class GameLogic:
 
         enemy_to_fight = ENEMY_DATA_LOOKUP.get(data_key)
         if enemy_to_fight:
-            self._start_battle(game_state, enemy_to_fight, object_to_interact_with, data_key)
+            self._start_battle(
+                game_state, enemy_to_fight, object_to_interact_with, data_key, renderer
+            )
 
 
 # --- CLASE PRINCIPAL DEL JUEGO ---
 class Game:
     """Gestiona el flujo principal del juego (bucle, estado, etc.)."""
-    def __init__(self, game_state: GameState, input_handler: InputHandler, renderer: Renderer, game_logic: GameLogic):
+
+    def __init__(
+        self,
+        game_state: GameState,
+        input_handler: InputHandler,
+        renderer: Renderer,
+        game_logic: GameLogic,
+    ):
         """
         Inicializa el coordinador del juego con sus dependencias.
 
@@ -709,18 +813,18 @@ class Game:
 
     def update(self, direction: str):
         """Delega la actualización del estado del juego al manejador de lógica."""
-        self.game_logic.update_state(direction, self.game_state)
+        self.game_logic.update_state(direction, self.game_state, self.renderer)
 
 
 # --- FUNCIÓN DE UTILIDAD: LIMPIAR PANTALLA ---
 def clear_screen():
     """Limpia la pantalla de la terminal, compatible con Windows y macOS/Linux."""
     # Para Windows.
-    if os.name == 'nt':
-        _ = os.system('cls')
+    if os.name == "nt":
+        _ = os.system("cls")
     # Para macOS y Linux.
     else:
-        _ = os.system('clear')
+        _ = os.system("clear")
 
 
 # --- BUCLE PRINCIPAL. ---
@@ -757,10 +861,12 @@ def main():
     gender_choice: str = ""
     trainer_article: str = ""
     trainer_gender_term: str = ""
-    use_neutral_phrasing: bool = False # Nuevo flag para la frase neutra
+    use_neutral_phrasing: bool = False  # Nuevo flag para la frase neutra
 
     while gender_choice not in ["h", "m", "a"]:
-        gender_choice = input("¿Eres 'h' (hombre), 'm' (mujer) o 'a' (prefiero no decirlo)? ").strip().lower()
+        gender_choice = (
+            input("¿Eres 'h' (hombre), 'm' (mujer) o 'a' (prefiero no decirlo)? ").strip().lower()
+        )
         if gender_choice == "h":
             trainer_article = "El"
             trainer_gender_term = "entrenador"
@@ -768,23 +874,29 @@ def main():
             trainer_article = "La"
             trainer_gender_term = "entrenadora"
         elif gender_choice == "a":
-            use_neutral_phrasing = True # Activa el flag para la frase neutra.
+            use_neutral_phrasing = True  # Activa el flag para la frase neutra.
         else:
             print("Opción no válida. Por favor, escribe 'h', 'm' o 'a'.")
 
     clear_screen()
     print(f"🌟 ¡Bienvenido a la Liga Pokémon Snake, {my_pokemon_trainer_name}! 🌟")
-    print(f"\nTu misión es guiar a Squirtle {PLAYER_EMOJI} a través del laberinto."
-            f"(Con WASD de tu teclado).")
-    print(f"El objetivo es obtener las"
-            f" {REQUIRED_BANDS} Bandas de Entrenador (⭐) y desafiar al Jefe Final (👑) en el Estadio.")
+    print(
+        f"\nTu misión es guiar a Squirtle {PLAYER_EMOJI} a través del laberinto."
+        f"(Con WASD de tu teclado)."
+    )
+    print(
+        f"El objetivo es obtener las"
+        f" {REQUIRED_BANDS} Bandas de Entrenador (⭐) y desafiar al Jefe Final (👑) en el Estadio."
+    )
 
     # Usa el artículo y el término de género seleccionados, o una frase neutra.
     if use_neutral_phrasing:
         print(f"\n🧑 ¡{my_pokemon_trainer_name} y su Squirtle comienzan esta aventura!💦\n")
     else:
-        print(f"\n🧑 ¡{trainer_article} {trainer_gender_term} {my_pokemon_trainer_name} "
-                f"con su Squirtle comienzan esta aventura!💦\n")
+        print(
+            f"\n🧑 ¡{trainer_article} {trainer_gender_term} {my_pokemon_trainer_name} "
+            f"con su Squirtle comienzan esta aventura!💦\n"
+        )
 
     input("✅ Pulsa Enter para iniciar el mapa...")
     clear_screen()
