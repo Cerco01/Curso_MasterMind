@@ -78,12 +78,34 @@ Malas respuestas (evitar):
 - Mantener estilo existente; evitar reformateos masivos no relacionados.
 - Sin “magic numbers”; usar constantes descriptivas.
 - Evitar nuevos globales; preferir contenedores de estado/`dataclass`.
+- **Atención a los tests al renombrar:** Al refactorizar (especialmente
+    renombrar archivos), verificar manualmente que los *paths* de los *mocks*
+    (ej. `mocker.patch('mi_modulo_antiguo...')`) se han actualizado en los
+    tests, ya que las herramientas automáticas suelen fallar.
 
 ## Estilo y calidad
 - Tipado en funciones públicas y estructuras principales.
 - Early returns; sin `except` vacíos.
 - Comentarios solo para racionales no obvios y decisiones.
 - Textos del juego en español; unificación de idioma por defecto.
+
+### Principios de Diseño de Código
+Además de los principios **SOLID**, el código se adherirá a los siguientes:
+- **DRY (Don't Repeat Yourself):** Evitar la duplicación de código. Cada pieza de lógica debe tener una única representación autorizada.
+- **KISS (Keep It Simple, Stupid):** Priorizar la simplicidad y evitar la complejidad innecesaria. El código debe ser fácil de leer y entender.
+- **YAGNI (You Ain't Gonna Need It):** No implementar funcionalidades "por si acaso". Centrarse únicamente en los requisitos actuales.
+- **SoC (Separation of Concerns):** Dividir el programa en partes distintas con responsabilidades claras y bien definidas (ej: `GameLogic`, `Renderer`, `InputHandler`).
+
+### Definición de Tareas (INVEST)
+
+Para asegurar que cada lote de trabajo sea manejable y aporte valor, las tareas o "user stories" que definamos seguirán el principio **INVEST**:
+
+- **I (Independent / Independiente):** Cada tarea debe ser autónoma y no depender de otras para ser completada.
+- **N (Negotiable / Negociable):** Los detalles de una tarea no son un contrato cerrado; podemos discutirlos y refinarlos.
+- **V (Valuable / Valiosa):** Cada tarea debe aportar un valor claro y tangible para el usuario final (el jugador).
+- **E (Estimable / Estimable):** Debemos ser capaces de estimar el esfuerzo necesario para completar la tarea.
+- **S (Small / Pequeña):** La tarea debe ser lo suficientemente pequeña para completarse en un lote de trabajo corto.
+- **T (Testable / Verificable):** Debe haber una forma clara de probar que la tarea se ha completado correctamente.
 
 ## Linter/Typing/Tests
 - Linter (ruff/flake8) sin warnings.

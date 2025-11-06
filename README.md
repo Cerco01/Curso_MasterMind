@@ -7,14 +7,14 @@ Este repositorio contiene ejercicios y mini‑proyectos del curso.
 - Para contribuciones, revisa `CONTRIBUTING.md`.
 
 ## Estructura relevante
-- Juego principal: `Aprende a programar con Python/Primeros Programas Simples/13. Entrega Pokemon Snake/Pokemon_Snake_v01.py`
+- Juego principal: `Aprende a programar con Python/Primeros Programas Simples/13. Entrega Pokemon Snake/pokemon_snake.py`
 
 ## Requisitos
 - Python 3.12 (ver `venv/` ya configurado) y dependencias en `requirements.txt`.
 
 ## Ejecución rápida del juego
 ```bash
-python "Aprende a programar con Python/Primeros Programas Simples/13. Entrega Pokemon Snake/Pokemon_Snake_v01.py"
+python "Aprende a programar con Python/Primeros Programas Simples/13. Entrega Pokemon Snake/pokemon_snake.py"
 ```
 
 ## Referencias
