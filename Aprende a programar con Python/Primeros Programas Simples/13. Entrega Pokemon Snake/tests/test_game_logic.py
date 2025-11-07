@@ -4,11 +4,11 @@ import pytest
 # (Anotación) Importamos las clases y constantes que necesitamos
 from pokemon_snake import (
     ENEMY_DATA_LOOKUP,
-    HEAL_AMOUNT_ON_VICTORY,  # Necesario para el test de batalla
+    HEAL_AMOUNT_ON_VICTORY,
     MAP_HEIGHT,
     MAP_WIDTH,
-    REQUIRED_BANDS,  # Necesario para el test del portero
-    SQUIRTLE_DATA,
+    REQUIRED_BANDS,
+    PIKACHU_DATA,
     EnemyDataKey,
     GameLogic,
     GameState,
@@ -98,7 +98,7 @@ def clean_game_state():
     (Anotación) Esta 'fixture' crea un GameState limpio y
     fresco para cada prueba que lo pida.
     """
-    SQUIRTLE_DATA.trainer = "Test Trainer"
+    PIKACHU_DATA.trainer = "Test Trainer"
     # (Anotación) Eliminamos la línea 'gender_term' porque
     # no existe en tu Dataclass de PokemonData
     return GameState()
@@ -182,45 +182,43 @@ def test_porter_blocks_if_not_enough_bands(game_logic_instance, clean_game_state
 
 def test_battle_player_wins(game_logic_instance, clean_game_state, mocker):
     """
-    (Anotación) Prueba un flujo de batalla completo donde el jugador gana.
-    Usamos 'mocker' para controlar todo lo aleatorio y el input.
+    (Anotación) Prueba un flujo de batalla completo donde el jugador (Pikachu) gana.
     """
     # (Anotación) Datos de prueba
     bulbasaur_data = ENEMY_DATA_LOOKUP[EnemyDataKey.BULBASAUR]
-    object_ref = (EnemyDataKey.BULBASAUR, 5, 1)  # Posición ficticia
-    initial_hp = clean_game_state.squirtle_current_hp  # 80
+    object_ref = (EnemyDataKey.BULBASAUR, 5, 1)
+    initial_hp = clean_game_state.player_current_hp  # <-- CORREGIDO (usa player_hp)
+    # (Debe ser 75, según PIKACHU_DATA)
 
     # --- MOCKING (SIMULACIÓN) ---
 
-    # (Anotación) 1. Simulamos que el jugador SIEMPRE elige 'P' (Placaje)
-    mocker.patch.object(game_logic_instance, "_get_player_attack_choice", return_value="P")
+    # (Anotación) 1. Simulamos que el jugador SIEMPRE elige 'A' (Ataque Rápido)
+    mocker.patch.object(game_logic_instance, '_get_player_attack_choice',
+                        return_value="A")  # <-- CORREGIDO (de "P" a "A")
 
     # (Anotación) 2. Simulamos que NADIE esquiva (random.randint siempre da 10)
-    mocker.patch("pokemon_snake.random.randint", return_value=10)
+    mocker.patch('pokemon_snake.random.randint', return_value=10)
 
     # (Anotación) 3. Simulamos que el enemigo SIEMPRE usa su primer ataque ('tackle', 8 daño)
-    mocker.patch("pokemon_snake.random.choice", return_value=("tackle", 8))
+    mocker.patch('pokemon_snake.random.choice', return_value=('tackle', 8))
 
     # (Anotación) 4. Simulamos 'input()' para que la prueba no se pause
-    mocker.patch("builtins.input", return_value="")
+    mocker.patch('builtins.input', return_value="")
 
     # (Anotación) 5. Simulamos 'clear_screen' para que no haga nada
-    mocker.patch("pokemon_snake.clear_screen")
+    mocker.patch('pokemon_snake.clear_screen')
 
-    # (Anotación) 6. Creamos un Mock para el Renderer y su método público
+    # (Anotación) 6. Creamos un Mock para el Renderer
     mock_renderer = mocker.MagicMock()
-    mocker.patch.object(mock_renderer, "render_hp_bars")
+    mocker.patch.object(mock_renderer, 'render_hp_bars')
 
     # --- EJECUCIÓN ---
-
-    # (Anotación) Ejecutamos la batalla. Tu código _start_battle
-    # (necesita el 'data_key' y el 'renderer', así que los añadimos)
     game_logic_instance._start_battle(
         clean_game_state,
         bulbasaur_data,
         object_ref,
-        EnemyDataKey.BULBASAUR,  # <--- Argumento necesario
-        mock_renderer,  # <--- Argumento necesario
+        EnemyDataKey.BULBASAUR,
+        mock_renderer
     )
 
     # --- VERIFICACIÓN ---
@@ -228,18 +226,17 @@ def test_battle_player_wins(game_logic_instance, clean_game_state, mocker):
     # (Anotación) ¿Ganamos la banda?
     assert clean_game_state.bands_obtained == 1
 
-    # (Anotación) ¿Se curó Squirtle?
-    # HP inicial = 80
+    # (Anotación) ¿Se curó Pikachu?
+    # HP inicial = 75
     # Daño enemigo = 8
-    # HP al final de batalla (antes de curar) = 72
+    # HP al final de batalla = 67
     # Curación = 70
-    # HP final (después de curar) = min(72 + 70, 80) = 80
-    expected_hp_after_battle = initial_hp - 8  # 72
-    expected_hp_after_healing = min(
-        expected_hp_after_battle + HEAL_AMOUNT_ON_VICTORY, SQUIRTLE_DATA.initial_hp
-    )  # min(142, 80)
+    # HP final = min(67 + 70, 75) = 75
+    expected_hp_after_battle = initial_hp - 8  # 67
+    expected_hp_after_healing = min(expected_hp_after_battle + HEAL_AMOUNT_ON_VICTORY,
+                                    PIKACHU_DATA.initial_hp)  # min(137, 75)
 
-    assert clean_game_state.squirtle_current_hp == expected_hp_after_healing
+    assert clean_game_state.player_current_hp == expected_hp_after_healing  # <-- CORREGIDO (usa 75)
 
     # (Anotación) ¿Se añadió el emoji a la cola?
     assert len(clean_game_state.defeated_enemies_list) == 1

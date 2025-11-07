@@ -98,14 +98,14 @@ REQUIRED_BANDS: int = 2
 HEAL_AMOUNT_ON_VICTORY: int = 70
 
 # Estética y Emotes.
-PLAYER_EMOJI: str = "🐢"
+PLAYER_EMOJI: str = "🐀"
 PORTER_EMOJI: str = "🙎‍♂️"
 BOSS_EMOJI: str = "🌟"
 ENEMY_GENERIC_EMOJI: str = "⭐"
 DEFAULT_TAIL_EMOJI: str = "⚪"
 
 # Mapa de selección de ataques del jugador.
-ATTACK_CHOICE_MAP: Dict[str, str] = {"P": "tackle", "A": "water_gun", "B": "bubble"}
+ATTACK_CHOICE_MAP: Dict[str, str] = {"A": "quick_attack", "I": "thunder_shock", "C": "iron_tail"}
 
 # Mapa de emojis para objetos especiales del mapa.
 SPECIAL_EMOJI_MAP: Dict[EnemyDataKey, str] = {
@@ -132,15 +132,23 @@ class PokemonData:
     player_turn_emotes: str = ""  # Específico para el jugador
 
 
-# Datos de Squirtle (Jugador).
-SQUIRTLE_DATA = PokemonData(
-    name="Squirtle",
-    trainer="Trainer Name Placeholder",  # Se actualiza con el input
-    turn_text="⚔️'¡Turno de Squirtle!'💦\n",
+# Datos de Pikachu (Jugador).
+PIKACHU_DATA = PokemonData(
+    name="Pikachu",
+    trainer="Trainer Name Placeholder",
+    turn_text="⚔️'¡Turno de Pikachu!'⚡️\n",
     player_turn_emotes="🔻" * 13 + "\n",
-    initial_hp=80,
-    attacks={"tackle": 11, "water_gun": 13, "bubble": 9},
-    attack_names_es={"tackle": "Placaje", "water_gun": "Pistola Agua", "bubble": "Burbuja"},
+    initial_hp=75,
+    attacks={
+        "quick_attack": 10,
+        "thunder_shock": 14,
+        "iron_tail": 12
+    },
+    attack_names_es={
+        "quick_attack": "Ataque Rápido",
+        "thunder_shock": "Impactrueno",
+        "iron_tail": "Cola Férrea",
+    },
 )
 
 # Datos de los Enemigos Fijos.
@@ -151,8 +159,15 @@ BULBASAUR_DATA = PokemonData(
     turn_text="🌿'¡Turno de Bulbasaur!'🌿\n",
     turn_emotes="🔹" * 12 + "\n",
     initial_hp=70,
-    attacks={"tackle": 8, "vine_whip": 9, "leech_seed": 7},
-    attack_names_es={"tackle": "Placaje", "vine_whip": "Látigo Cepa", "leech_seed": "Drenadoras"},
+    attacks={
+        "tackle": 8,
+        "vine_whip": 9,
+        "leech_seed": 7},
+    attack_names_es={
+        "tackle": "Placaje",
+        "vine_whip": "Látigo Cepa",
+        "leech_seed": "Drenadoras"
+    },
 )
 
 CHARMANDER_DATA = PokemonData(
@@ -167,7 +182,11 @@ CHARMANDER_DATA = PokemonData(
         "ember": 10,
         "fire_spin": 8,
     },
-    attack_names_es={"scratch": "Arañazo", "ember": "Ascuas", "fire_spin": "Giro Fuego"},
+    attack_names_es={
+        "scratch": "Arañazo",
+        "ember": "Ascuas",
+        "fire_spin": "Giro Fuego"
+    },
 )
 
 BOSS_EEVEE_DATA = PokemonData(
@@ -177,7 +196,11 @@ BOSS_EEVEE_DATA = PokemonData(
     turn_text="💀'¡Turno de Eevee Oscuro!'🌟\n",
     turn_emotes="🔥" * 15 + "\n",
     initial_hp=90,
-    attacks={"shadow_ball": 9, "quick_attack": 10, "dark_pulse": 7},
+    attacks={
+        "shadow_ball": 9,
+        "quick_attack": 10,
+        "dark_pulse": 7
+    },
     attack_names_es={
         "shadow_ball": "Bola Sombra",
         "quick_attack": "Ataque Rápido",
@@ -241,7 +264,7 @@ class GameState:
         self.my_position: List[int] = [20, 18]
         self.tail: List[List[int]] = []
         self.tail_length: int = 0
-        self.squirtle_current_hp: int = SQUIRTLE_DATA.initial_hp
+        self.player_current_hp: int = PIKACHU_DATA.initial_hp
         self.bands_obtained: int = 0
         self.porter_defeated: bool = False
         self.map_objects: List[Tuple[EnemyDataKey, int, int]] = []
@@ -276,7 +299,7 @@ class GameState:
         self.my_position = [20, 18]
         self.tail = []
         self.tail_length = 0
-        self.squirtle_current_hp = SQUIRTLE_DATA.initial_hp
+        self.player_current_hp = PIKACHU_DATA.initial_hp
         self.bands_obtained = 0
         self.porter_defeated = False
         self.map_objects = []
@@ -288,7 +311,7 @@ class GameState:
     def reset_player_after_defeat(self) -> None:
         """Reinicia solo la posición y la vida del jugador tras una derrota normal."""
         self.my_position = [20, 18]
-        self.squirtle_current_hp = SQUIRTLE_DATA.initial_hp
+        self.player_current_hp = PIKACHU_DATA.initial_hp
 
 
 # --- CLASE DE GESTIÓN DE ENTRADA ---
@@ -524,14 +547,14 @@ class GameLogic:
             game_state.obstacle_definition[16][21] = " "
 
     @staticmethod
-    def _present_battle(squirtle_data: PokemonData, enemy_data: PokemonData) -> None:
+    def _present_battle(player_data: PokemonData, enemy_data: PokemonData) -> None:
         """Muestra la pantalla de presentación del combate."""
         clear_screen()
         print("⚔️" * 18)
         print("¡UN COMBATE ESTÁ A PUNTO DE COMENZAR!")
         print("⚔️" * 18)
         print(
-            f"{squirtle_data.trainer} saca a {squirtle_data.name} {PLAYER_EMOJI}\n"
+            f"{player_data.trainer} saca a {player_data.name} {PLAYER_EMOJI}\n"
             f"                VS\n"
         )
         print(
@@ -542,57 +565,67 @@ class GameLogic:
         input()
 
     @staticmethod
-    def _get_player_attack_choice(squirtle_data: PokemonData) -> str:
+    def _get_player_attack_choice(player_data: PokemonData) -> str:
         """Muestra las opciones y gestiona la entrada del usuario para el ataque."""
+
+        # (Anotación) Actualizamos el texto del menú y del prompt para Pikachu
+        menu_text = (
+            "🤜 [A]taque Rápido.\n"
+            "⚡️ [I]mpactrueno.\n"
+            "🔩 [C]ola Férrea.\n"
+            "🤷 [N]o hacer nada.\n"
+        )
+        prompt_text = "Introduce la letra del ataque (🤜[A], ⚡️[I], 🔩[C] o 🤷[N]): "
+
         print(
-            squirtle_data.player_turn_emotes
-            + squirtle_data.turn_text
-            + squirtle_data.player_turn_emotes
-            + "🤜 [P]lacaje.\n💦 Pistola [A]gua.\n🫧 [B]urbuja.\n 🤷[N]o hacer nada.\n"
-            + squirtle_data.player_turn_emotes
+            player_data.player_turn_emotes
+            + player_data.turn_text
+            + player_data.player_turn_emotes
+            + menu_text  # <-- Texto corregido
+            + player_data.player_turn_emotes
         )
         choice = ""
-        while choice not in ["P", "A", "B", "N"]:
+        while choice not in ["A", "I", "C", "N"]:
             choice = (
-                input("Introduce la letra del ataque (🤜[P], 💦[A], 🫧[B] o 🤷[N]): ")
+                input(prompt_text)  # <-- Prompt corregido
                 .strip()
                 .upper()
             )
-            if choice not in ["P", "A", "B", "N"]:
+            if choice not in ["A", "I", "C", "N"]:
                 print("Opción no válida. Por favor, elige una de las letras indicadas.")
         return choice
 
     @staticmethod
-    def _execute_enemy_turn(squirtle_hp: int, enemy_data: PokemonData) -> int:
+    def _execute_enemy_turn(player_hp: int, enemy_data: PokemonData) -> int:
         """Ejecuta la lógica del turno del enemigo."""
         clear_screen()
         print(enemy_data.turn_emotes + "\n" + enemy_data.turn_text + "\n" + enemy_data.turn_emotes)
         attack_name_key, enemy_damage = random.choice(list(enemy_data.attacks.items()))
         attack_name_es = enemy_data.attack_names_es.get(attack_name_key, attack_name_key)
         if random.randint(1, 10) == 1:
-            print(f"\n🌀Pero... ¡¡¡SQUIRTLE ESQUIVÓ EL ATAQUE DE {enemy_data.name.upper()}!!!💨\n")
+            print(f"\n🌀Pero... ¡¡¡PIKACHU ESQUIVÓ EL ATAQUE DE {enemy_data.name.upper()}!!!💨\n")
         else:
             print(
                 f"¡{enemy_data.name} usa {attack_name_es.upper()}! "
                 f"Recibes {enemy_damage} de daño.\n"
             )
-            squirtle_hp -= enemy_damage
-            squirtle_hp = max(squirtle_hp, 0)
-        return squirtle_hp
+            player_hp -= enemy_damage
+            player_hp = max(player_hp, 0)
+        return player_hp
 
     def _execute_player_turn(
-        self, enemy_hp: int, squirtle_data: PokemonData, enemy_data: PokemonData
+        self, enemy_hp: int, player_data: PokemonData, enemy_data: PokemonData
     ) -> int:
         """Ejecuta la lógica del turno del jugador."""
         clear_screen()
-        attack_choice = self._get_player_attack_choice(squirtle_data)
+        attack_choice = self._get_player_attack_choice(player_data)
         clear_screen()
         print(
-            squirtle_data.player_turn_emotes
+            player_data.player_turn_emotes
             + "\n"
-            + squirtle_data.turn_text
+            + player_data.turn_text
             + "\n"
-            + squirtle_data.player_turn_emotes
+            + player_data.player_turn_emotes
         )
 
         # Si el enemigo esquiva, termina el turno antes de calcular el daño.
@@ -603,14 +636,14 @@ class GameLogic:
         damage_to_enemy = 0
         if attack_choice in ATTACK_CHOICE_MAP:
             attack_key = ATTACK_CHOICE_MAP[attack_choice]
-            damage_to_enemy = squirtle_data.attacks.get(attack_key, 0)
+            damage_to_enemy = player_data.attacks.get(attack_key, 0)
         elif attack_choice == "N":
-            print("¡Squirtle no hace nada! 🤷\n")
+            print("¡Pikachu no hace nada! 🤷\n")
 
         if damage_to_enemy > 0:
             enemy_hp -= damage_to_enemy
             enemy_hp = max(enemy_hp, 0)
-            print(f"¡Squirtle ataca! {enemy_data.name} recibe {damage_to_enemy} de daño.\n")
+            print(f"¡Pikachu ataca! {enemy_data.name} recibe {damage_to_enemy} de daño.\n")
 
         return enemy_hp
 
@@ -623,27 +656,27 @@ class GameLogic:
         renderer: Renderer,
     ) -> None:
         """Ejecuta el bucle de combate y procesa el resultado."""
-        squirtle_hp = game_state.squirtle_current_hp
+        player_hp = game_state.player_current_hp
         enemy_hp = enemy_data.initial_hp
-        self._present_battle(SQUIRTLE_DATA, enemy_data)
-        while squirtle_hp > 0 and enemy_hp > 0:
-            squirtle_hp = self._execute_enemy_turn(squirtle_hp, enemy_data)
+        self._present_battle(PIKACHU_DATA, enemy_data)
+        while player_hp > 0 and enemy_hp > 0:
+            player_hp = self._execute_enemy_turn(player_hp, enemy_data)
             renderer.render_hp_bars(
-                SQUIRTLE_DATA.name,
-                squirtle_hp,
-                SQUIRTLE_DATA.initial_hp,
+                PIKACHU_DATA.name,
+                player_hp,
+                PIKACHU_DATA.initial_hp,
                 enemy_data.name,
                 enemy_hp,
                 enemy_data.initial_hp,
             )
-            if squirtle_hp <= 0:
+            if player_hp <= 0:
                 break
             input("✅ Enter...")
-            enemy_hp = self._execute_player_turn(enemy_hp, SQUIRTLE_DATA, enemy_data)
+            enemy_hp = self._execute_player_turn(enemy_hp, PIKACHU_DATA, enemy_data)
             renderer.render_hp_bars(
-                SQUIRTLE_DATA.name,
-                squirtle_hp,
-                SQUIRTLE_DATA.initial_hp,
+                PIKACHU_DATA.name,
+                player_hp,
+                PIKACHU_DATA.initial_hp,
                 enemy_data.name,
                 enemy_hp,
                 enemy_data.initial_hp,
@@ -652,8 +685,8 @@ class GameLogic:
                 break
             input("\n✅ Enter...")
 
-        game_state.squirtle_current_hp = squirtle_hp
-        if squirtle_hp > 0:
+        game_state.player_current_hp = player_hp
+        if player_hp > 0:
             self._process_victory(game_state, enemy_data, object_ref, data_key)
         else:
             self._process_defeat(game_state, enemy_data, data_key)
@@ -687,11 +720,11 @@ class GameLogic:
         print(f"¡{enemy_data.name} se une a tu equipo como parte de tu cola! {defeated_emoji}\n")
 
         # Cura al jugador.
-        new_hp = game_state.squirtle_current_hp + HEAL_AMOUNT_ON_VICTORY
-        game_state.squirtle_current_hp = min(new_hp, SQUIRTLE_DATA.initial_hp)
+        new_hp = game_state.player_current_hp + HEAL_AMOUNT_ON_VICTORY
+        game_state.player_current_hp = min(new_hp, PIKACHU_DATA.initial_hp)
         print(
-            f"Squirtle recupera {HEAL_AMOUNT_ON_VICTORY} HP. Ahora tiene "
-            f"{game_state.squirtle_current_hp}/{SQUIRTLE_DATA.initial_hp} HP.\n"
+            f"Pikachu recupera {HEAL_AMOUNT_ON_VICTORY} HP. Ahora tiene "
+            f"{game_state.player_current_hp}/{PIKACHU_DATA.initial_hp} HP.\n"
         )
 
         # Otorga bandas.
@@ -711,7 +744,7 @@ class GameLogic:
         """Muestra el mensaje de victoria final y cierra el juego."""
         clear_screen()
         print("🌟¡FELICIDADES, HAS DERROTADO A EEVEE OSCURO!🌟")
-        print(f"¡{SQUIRTLE_DATA.trainer.upper()} es ahora el CAMPEÓN DE LA LIGA POKÉMON SNAKE!")
+        print(f"¡{PIKACHU_DATA.trainer.upper()} es ahora el CAMPEÓN DE LA LIGA POKÉMON SNAKE!")
         input("\n🎉 Pulsa Enter para cerrar el juego y celebrar la victoria. 🎉")
         os._exit(0)
 
@@ -855,7 +888,7 @@ def main():
     clear_screen()
 
     my_pokemon_trainer_name: str = input("🧑 ¿Cual es el nombre del entrenador Pokemon de hoy?\n\n")
-    SQUIRTLE_DATA.trainer = my_pokemon_trainer_name
+    PIKACHU_DATA.trainer = my_pokemon_trainer_name
 
     # Pregunta por el género del entrenador y determina el artículo y el término
     gender_choice: str = ""
@@ -881,7 +914,7 @@ def main():
     clear_screen()
     print(f"🌟 ¡Bienvenido a la Liga Pokémon Snake, {my_pokemon_trainer_name}! 🌟")
     print(
-        f"\nTu misión es guiar a Squirtle {PLAYER_EMOJI} a través del laberinto."
+        f"\nTu misión es guiar a Pikachu {PLAYER_EMOJI} a través del laberinto."
         f"(Con WASD de tu teclado)."
     )
     print(
@@ -891,11 +924,11 @@ def main():
 
     # Usa el artículo y el término de género seleccionados, o una frase neutra.
     if use_neutral_phrasing:
-        print(f"\n🧑 ¡{my_pokemon_trainer_name} y su Squirtle comienzan esta aventura!💦\n")
+        print(f"\n🧑 ¡{my_pokemon_trainer_name} y su Pikachu comienzan esta aventura!⚡\n")
     else:
         print(
             f"\n🧑 ¡{trainer_article} {trainer_gender_term} {my_pokemon_trainer_name} "
-            f"con su Squirtle comienzan esta aventura!💦\n"
+            f"con su Pikachu comienzan esta aventura!⚡\n"
         )
 
     input("✅ Pulsa Enter para iniciar el mapa...")
