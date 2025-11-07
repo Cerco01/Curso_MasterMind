@@ -20,3 +20,9 @@ pip-delete-this-directory.txt
 .gitconfig
 .idlerc-recent-files.lst
 Thumbs.db
+
+# Archivos de metadatos del SO
+.DS_Store
+
+# Directorios de entornos virtuales (ya en pyproject, pero buena práctica)
+venv/
