@@ -68,6 +68,10 @@ NOTA PARA EL PROFESOR
         - **Pruebas Unitarias**: Movimiento y parsing del mapa.
         - **Pruebas de Integración**: Colisiones y reglas (ej. portero).
         - **Pruebas con Mocking**: Flujo de batalla completo.
+        
+5. MI REPOSITORIO EN GITHUB
+    El resto de archivos del proyecto, incluyendo los tests se pueden ver en:
+    https://github.com/Cerco01/Curso_MasterMind
 
 ===================================================================
 """
