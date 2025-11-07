@@ -98,10 +98,10 @@ REQUIRED_BANDS: int = 2
 HEAL_AMOUNT_ON_VICTORY: int = 70
 
 # Estética y Emotes.
-PLAYER_EMOJI: str = "🐀"
-PORTER_EMOJI: str = "🙎‍♂️"
-BOSS_EMOJI: str = "🌟"
-ENEMY_GENERIC_EMOJI: str = "⭐"
+PLAYER_EMOJI: str = "😸"
+PORTER_EMOJI: str = "👨‍⚖️️"
+BOSS_EMOJI: str = "🦊"
+ENEMY_GENERIC_EMOJI: str = "🧍‍♂️"
 DEFAULT_TAIL_EMOJI: str = "⚪"
 
 # Mapa de selección de ataques del jugador.
@@ -136,8 +136,8 @@ class PokemonData:
 PIKACHU_DATA = PokemonData(
     name="Pikachu",
     trainer="Trainer Name Placeholder",
-    turn_text="⚔️'¡Turno de Pikachu!'⚡️\n",
-    player_turn_emotes="🔻" * 13 + "\n",
+    turn_text="⚔️'¡Turno de Pikachu!'⚡️",
+    player_turn_emotes="🔻" * 12,
     initial_hp=75,
     attacks={
         "quick_attack": 10,
@@ -155,9 +155,9 @@ PIKACHU_DATA = PokemonData(
 BULBASAUR_DATA = PokemonData(
     name="Bulbasaur",
     trainer="Erika",
-    emoji="🌿",
-    turn_text="🌿'¡Turno de Bulbasaur!'🌿\n",
-    turn_emotes="🔹" * 12 + "\n",
+    emoji="🐢",
+    turn_text="🐢'¡Turno de Bulbasaur!'🐢",
+    turn_emotes="🔹" * 13,
     initial_hp=70,
     attacks={
         "tackle": 8,
@@ -173,9 +173,9 @@ BULBASAUR_DATA = PokemonData(
 CHARMANDER_DATA = PokemonData(
     name="Charmander",
     trainer="Blaine",
-    emoji="🔥",
-    turn_text="🔥'¡Turno de Charmander!'🔥\n",
-    turn_emotes="🔹" * 12 + "\n",
+    emoji="🐦‍🔥",
+    turn_text="🐦‍🔥'¡Turno de Charmander!'🐦‍🔥",
+    turn_emotes="🔹" * 14,
     initial_hp=70,
     attacks={
         "scratch": 7,
@@ -193,8 +193,8 @@ BOSS_EEVEE_DATA = PokemonData(
     name="Eevee Oscuro",
     trainer="Gary",
     emoji=BOSS_EMOJI,
-    turn_text="💀'¡Turno de Eevee Oscuro!'🌟\n",
-    turn_emotes="🔥" * 15 + "\n",
+    turn_text="💀'¡Turno de Eevee Oscuro!'🦊",
+    turn_emotes="🔥" * 15,
     initial_hp=90,
     attacks={
         "shadow_ball": 9,
@@ -391,7 +391,7 @@ class Renderer:
         if not is_stadium_zone:
             return None
         if x == 20 and not game_state.porter_defeated:
-            return "👑"
+            return "🏰"
         if x == 15 or x == 25:
             return "🏟️"
         return "═"
@@ -550,16 +550,27 @@ class GameLogic:
     def _present_battle(player_data: PokemonData, enemy_data: PokemonData) -> None:
         """Muestra la pantalla de presentación del combate."""
         clear_screen()
+
+        # Usamos un ancho fijo para centrar el VS del combate.
+        battle_title_width = 21
+
+        # --- Título ---
         print("⚔️" * 18)
         print("¡UN COMBATE ESTÁ A PUNTO DE COMENZAR!")
         print("⚔️" * 18)
+
+        # --- Líneas de Combate ---
+        vs_line = "VS"
+
+        print(f"{player_data.trainer} saca a {player_data.name} {PLAYER_EMOJI}")
+
+        # Centramos el "VS" usando el ancho total del frame (82)
+        print(vs_line.center(battle_title_width))
+        print(f"{enemy_data.trainer} saca a {enemy_data.name} {enemy_data.emoji}")
+
+        # --- Resto del texto ---
         print(
-            f"{player_data.trainer} saca a {player_data.name} {PLAYER_EMOJI}\n"
-            f"                VS\n"
-        )
-        print(
-            f"{enemy_data.trainer} saca a {enemy_data.name} {enemy_data.emoji}\n"
-            f"ES EL TURNO DE {enemy_data.name.upper()}! ⚔️\n"
+            f"\nES EL TURNO DE {enemy_data.name.upper()}! ⚔️\n"
             f"✅ Pulsa Enter para comenzar el combate..."
         )
         input()
@@ -578,16 +589,16 @@ class GameLogic:
         prompt_text = "Introduce la letra del ataque (🤜[A], ⚡️[I], 🔩[C] o 🤷[N]): "
 
         print(
-            player_data.player_turn_emotes
-            + player_data.turn_text
-            + player_data.player_turn_emotes
-            + menu_text  # <-- Texto corregido
-            + player_data.player_turn_emotes
+            player_data.player_turn_emotes + "\n"     # Emotes de arriba del título.
+            + player_data.turn_text + "\n"            #Texto del turno.
+            + player_data.player_turn_emotes + "\n"   # Emotes de abajo del título.
+            + menu_text                               # Menú de ataques.
+            + player_data.player_turn_emotes          # Emotes de abajo del menú.
         )
         choice = ""
         while choice not in ["A", "I", "C", "N"]:
             choice = (
-                input(prompt_text)  # <-- Prompt corregido
+                input(prompt_text)
                 .strip()
                 .upper()
             )
@@ -717,7 +728,7 @@ class GameLogic:
         defeated_emoji = enemy_data.emoji or DEFAULT_TAIL_EMOJI
         game_state.defeated_enemies_list.append(defeated_emoji)
         game_state.tail_length = len(game_state.defeated_enemies_list)
-        print(f"¡{enemy_data.name} se une a tu equipo como parte de tu cola! {defeated_emoji}\n")
+        print(f"¡{enemy_data.name} se une a tu equipo! {defeated_emoji}\n")
 
         # Cura al jugador.
         new_hp = game_state.player_current_hp + HEAL_AMOUNT_ON_VICTORY
@@ -743,7 +754,7 @@ class GameLogic:
     def _handle_final_victory() -> None:
         """Muestra el mensaje de victoria final y cierra el juego."""
         clear_screen()
-        print("🌟¡FELICIDADES, HAS DERROTADO A EEVEE OSCURO!🌟")
+        print("🌟¡FELICIDADES, HAS DERROTADO A EEVEE OSCURO!🦊")
         print(f"¡{PIKACHU_DATA.trainer.upper()} es ahora el CAMPEÓN DE LA LIGA POKÉMON SNAKE!")
         input("\n🎉 Pulsa Enter para cerrar el juego y celebrar la victoria. 🎉")
         os._exit(0)
@@ -919,7 +930,7 @@ def main():
     )
     print(
         f"El objetivo es obtener las"
-        f" {REQUIRED_BANDS} Bandas de Entrenador (⭐) y desafiar al Jefe Final (👑) en el Estadio."
+        f" {REQUIRED_BANDS} Bandas de Entrenador (🏅) y desafiar al Jefe Final en el Estadio (🏰)."
     )
 
     # Usa el artículo y el término de género seleccionados, o una frase neutra.
