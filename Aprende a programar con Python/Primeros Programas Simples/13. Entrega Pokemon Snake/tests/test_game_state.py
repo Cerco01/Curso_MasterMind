@@ -1,4 +1,4 @@
-from pokemon_snake import MAP_WIDTH, GameState
+from pokemon_snake import GameConstants, GameState
 
 
 def test_parse_obstacle_map_dimensions_and_padding():
@@ -10,14 +10,13 @@ def test_parse_obstacle_map_dimensions_and_padding():
     raw_test_map = "# \n #\n##"
 
     # (Anotación) Accedemos al método estático (no necesitamos instancia)
-    # (Tu refactor lo hizo estático, ¡bien!)
     parsed_map = GameState._parse_obstacle_map(raw_test_map)
 
     # (Anotación) Verificación 1: Dimensiones
     assert len(parsed_map) == 3  # Debe tener 3 filas
-    assert len(parsed_map[0]) == MAP_WIDTH  # Cada fila debe rellenarse hasta MAP_WIDTH
-    assert len(parsed_map[1]) == MAP_WIDTH
-    assert len(parsed_map[2]) == MAP_WIDTH
+    assert len(parsed_map[0]) == GameConstants.MAP_WIDTH  # Cada fila debe rellenarse
+    assert len(parsed_map[1]) == GameConstants.MAP_WIDTH
+    assert len(parsed_map[2]) == GameConstants.MAP_WIDTH
 
     # (Anotación) Verificación 2: Contenido
     assert parsed_map[0][0] == "#"
